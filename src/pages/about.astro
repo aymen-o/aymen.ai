@@ -1,0 +1,85 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+
+<PageLayout title="About" description="Aymen El Akbari — full-stack developer, entrepreneur, and AI builder from Quebec City.">
+	<article>
+		<h1 class="font-mono text-2xl font-bold">About</h1>
+
+		<p class="mt-6 leading-[1.8] text-text-secondary">
+			I'm Aymen (<span lang="ar" dir="rtl" class="font-sans">أيمن</span>, meaning "blessed" in Arabic) ; a full-stack developer and entrepreneur based in Quebec City. I work in French and English, think in both, and occasionally dream in Arabic.
+		</p>
+
+		<!-- What I do -->
+		<div class="mt-12 border-t border-border pt-6">
+			<h2 class="font-mono text-xs font-medium uppercase tracking-[0.1em] text-text-secondary">What I do</h2>
+			<div class="mt-4 space-y-4 leading-[1.8] text-text-secondary">
+				<p>
+					By day, I'm a full-stack web developer at <strong class="text-text">Eddyfi Technologies</strong> ; a global NDT company with 1,000+ employees, recently acquired by ESAB (NYSE). I build internal web tooling using ASP.NET MVC and modern frontend stacks.
+				</p>
+				<p>
+					By night, I'm building AI products for home-service businesses.
+				</p>
+			</div>
+		</div>
+
+		<!-- What I believe -->
+		<div class="mt-12 border-t border-border pt-6">
+			<h2 class="font-mono text-xs font-medium uppercase tracking-[0.1em] text-text-secondary">What I believe</h2>
+			<div class="mt-4 space-y-4 leading-[1.8] text-text-secondary">
+				<p><strong class="text-text">Ship fast, iterate, learn.</strong> I'd rather deploy something imperfect on Monday than perfect it until June.</p>
+				<p><strong class="text-text">AI is leverage, not replacement.</strong> The best AI products make humans faster, not obsolete.</p>
+				<p><strong class="text-text">Quebec's tech ecosystem is underrated.</strong> MILA, strong privacy regulation, and a francophone market underserved by English-first tools.</p>
+			</div>
+		</div>
+
+		<!-- Skills -->
+		<div class="mt-12 border-t border-border pt-6">
+			<h2 class="font-mono text-xs font-medium uppercase tracking-[0.1em] text-text-secondary">Skills</h2>
+			<div class="mt-4 flex flex-wrap gap-2">
+				{['TypeScript', 'C#', 'ASP.NET', 'React', 'Next.js', 'Astro', 'Python', 'Node.js', 'PostgreSQL', 'Docker', 'Vercel', 'AI/LLM'].map((skill) => (
+					<span class="rounded-full border border-border px-3 py-1 font-mono text-sm">{skill}</span>
+				))}
+			</div>
+		</div>
+
+		<!-- Experience -->
+		<div class="mt-12 border-t border-border pt-6">
+			<h2 class="font-mono text-xs font-medium uppercase tracking-[0.1em] text-text-secondary">Experience</h2>
+			<div class="mt-6 space-y-6">
+				<div class="border-l-2 border-border pl-4">
+					<h3 class="font-mono text-sm font-bold">Eddyfi Technologies</h3>
+					<p class="font-mono text-xs text-text-secondary">Full-Stack Web Developer · 2023 - Present</p>
+					<p class="mt-1 text-sm leading-relaxed text-text-secondary">
+						Global NDT leader, 1,000+ employees, recently acquired by ESAB (NYSE). Building internal web tooling and ASP.NET applications.
+					</p>
+				</div>
+				<div class="border-l-2 border-border pl-4">
+					<h3 class="font-mono text-sm font-bold">Looka</h3>
+					<p class="font-mono text-xs text-text-secondary">Software Developer · 2021 - 2023</p>
+					<p class="mt-1 text-sm leading-relaxed text-text-secondary">Built ML-powered features for an AI logo and brand identity platform serving 20M+ entrepreneurs worldwide.</p>
+				</div>
+				<div class="border-l-2 border-border pl-4">
+					<h3 class="font-mono text-sm font-bold">Inworld AI</h3>
+					<p class="font-mono text-xs text-text-secondary">Kotlin Developer (Consultant) · 2022 - 2022</p>
+					<p class="mt-1 text-sm leading-relaxed text-text-secondary">Contract role building generative AI characters with realistic personalities, memories, and conversational behaviors. Early-stage AI startup (pre-product-market fit), Mountain View, CA.</p>
+				</div>
+				<div class="border-l-2 border-border pl-4">
+					<h3 class="font-mono text-sm font-bold">Bloc Solutions</h3>
+					<p class="font-mono text-xs text-text-secondary">Front-End Developer · 2020 - 2021</p>
+					<p class="mt-1 text-sm leading-relaxed text-text-secondary">Built V2 of a desktop application that automated lease agreement generation for Quebec apartment rentals, reducing manual data entry and ensuring compliance with provincial housing law.</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Fun facts -->
+		<div class="mt-12 border-t border-border pt-6">
+			<h2 class="font-mono text-xs font-medium uppercase tracking-[0.1em] text-text-secondary">Fun facts</h2>
+			<ul class="mt-4 space-y-2 text-text-secondary">
+				<li class="flex gap-2"><span class="text-text-secondary">—</span> Born in Morocco, raised in Canada; I navigate between three cultures and three languages daily</li>
+				<li class="flex gap-2"><span class="text-text-secondary">—</span> I am a 1700 elo chess player</li>
+				<li class="flex gap-2"><span class="text-text-secondary">—</span> Exited my first bootstrapped project at 21 years old</li>
+			</ul>
+		</div>
+	</article>
+</PageLayout>

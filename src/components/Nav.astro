@@ -1,0 +1,160 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const navItems = [
+	{ label: 'home', href: '/' },
+	{ label: 'about', href: '/about' },
+	{ label: 'blog', href: '/blog' },
+	{ label: 'projects', href: '/projects' },
+];
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string, current: string): boolean {
+	if (href === '/') return current === '/';
+	return current.startsWith(href);
+}
+---
+
+<header class="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-lg">
+	<nav class="mx-auto flex max-w-2xl items-center justify-between px-6 py-4">
+		<a href="/" class="font-mono text-sm font-bold tracking-tight transition-colors hover:text-text-secondary">
+			aymen.ai
+		</a>
+
+		<!-- Desktop nav -->
+		<div class="hidden items-center gap-6 sm:flex">
+			{navItems.map((item) => (
+				<a
+					href={item.href}
+					class:list={[
+						'relative font-mono text-sm tracking-wide transition-opacity duration-150',
+						isActive(item.href, currentPath) ? 'opacity-100' : 'opacity-50 hover:opacity-80',
+					]}
+				>
+					{item.label}
+					{isActive(item.href, currentPath) && (
+						<span class="absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-text"></span>
+					)}
+				</a>
+			))}
+			<ThemeToggle />
+		</div>
+
+		<!-- Mobile hamburger -->
+		<button
+			id="mobile-menu-btn"
+			type="button"
+			aria-label="Open menu"
+			class="flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-bg-secondary sm:hidden"
+		>
+			<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+		</button>
+	</nav>
+</header>
+
+<!-- Mobile overlay -->
+<div id="mobile-menu" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center bg-bg">
+	<button
+		id="mobile-menu-close"
+		type="button"
+		aria-label="Close menu"
+		class="absolute right-6 top-5 flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-bg-secondary"
+	>
+		<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+	</button>
+
+	<div class="flex flex-col items-center gap-8">
+		{navItems.map((item) => (
+			<a
+				href={item.href}
+				class:list={[
+					'font-mono text-2xl transition-opacity duration-150 mobile-nav-link',
+					isActive(item.href, currentPath) ? 'opacity-100' : 'opacity-50 hover:opacity-80',
+				]}
+			>
+				{item.label}
+			</a>
+		))}
+	</div>
+
+	<div class="absolute bottom-12">
+		<ThemeToggle />
+	</div>
+</div>
+
+<!-- Keyboard shortcut toast (first visit only) -->
+<div id="shortcut-toast" class="fixed bottom-6 left-1/2 z-50 hidden -translate-x-1/2 rounded-lg border border-border bg-bg-secondary px-4 py-2 font-mono text-xs text-text-secondary shadow-lg">
+	Tip: press h, a, b, or p to navigate
+</div>
+
+<script>
+	function initNav() {
+		// Mobile menu
+		const menuBtn = document.getElementById('mobile-menu-btn');
+		const menu = document.getElementById('mobile-menu');
+		const closeBtn = document.getElementById('mobile-menu-close');
+
+		if (menuBtn && menu && closeBtn) {
+			menuBtn.addEventListener('click', () => {
+				menu.classList.remove('hidden');
+				menu.classList.add('flex');
+			});
+			closeBtn.addEventListener('click', () => {
+				menu.classList.add('hidden');
+				menu.classList.remove('flex');
+			});
+			menu.querySelectorAll('.mobile-nav-link').forEach((link) => {
+				link.addEventListener('click', () => {
+					menu.classList.add('hidden');
+					menu.classList.remove('flex');
+				});
+			});
+		}
+
+		// Keyboard shortcuts
+		const shortcuts: Record<string, string> = {
+			h: '/',
+			a: '/about',
+			b: '/blog',
+			p: '/projects',
+		};
+
+		document.addEventListener('keydown', (e) => {
+			if (
+				e.target instanceof HTMLInputElement ||
+				e.target instanceof HTMLTextAreaElement ||
+				(e.target as HTMLElement)?.isContentEditable ||
+				e.metaKey || e.ctrlKey || e.altKey
+			) return;
+
+			const href = shortcuts[e.key];
+			if (href) {
+				// Dismiss toast on any shortcut press
+				const toast = document.getElementById('shortcut-toast');
+				if (toast) toast.classList.add('hidden');
+				localStorage.setItem('shortcut-seen', '1');
+
+				if (window.location.pathname !== href) {
+					window.location.href = href;
+				}
+			}
+		});
+
+		// First-visit toast
+		if (!localStorage.getItem('shortcut-seen')) {
+			const toast = document.getElementById('shortcut-toast');
+			if (toast) {
+				setTimeout(() => toast.classList.remove('hidden'), 1000);
+				setTimeout(() => {
+					toast.classList.add('hidden');
+					localStorage.setItem('shortcut-seen', '1');
+				}, 6000);
+			}
+		}
+	}
+
+	initNav();
+	document.addEventListener('astro:after-swap', initNav);
+	document.addEventListener('astro:page-load', initNav);
+</script>

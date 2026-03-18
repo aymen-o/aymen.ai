@@ -1,0 +1,28 @@
+{
+  "name": "aymen.ai",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "author": "Aymen El Akbari",
+  "license": "MIT",
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/vercel": "^8.1.4",
+    "@fontsource/geist-mono": "^5.2.7",
+    "@fontsource/geist-sans": "^5.2.5",
+    "@resvg/resvg-js": "^2.6.2",
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^5.18.0",
+    "satori": "^0.25.0",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "typescript": "^5.9.3"
+  }
+}

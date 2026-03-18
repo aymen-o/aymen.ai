@@ -1,0 +1,71 @@
+---
+---
+<div class="flex items-center gap-1" role="radiogroup" aria-label="Theme">
+	<button
+		type="button"
+		data-theme-btn="light"
+		aria-label="Switch to light mode"
+		class="theme-btn flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-bg-secondary"
+	>
+		<svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+	</button>
+	<button
+		type="button"
+		data-theme-btn="dark"
+		aria-label="Switch to dark mode"
+		class="theme-btn flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-bg-secondary"
+	>
+		<svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+	</button>
+	<button
+		type="button"
+		data-theme-btn="system"
+		aria-label="Use system theme"
+		class="theme-btn flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-bg-secondary"
+	>
+		<svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+	</button>
+</div>
+
+<script>
+	function initThemeToggle() {
+		const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-btn]');
+		if (!buttons.length) return;
+
+		function getTheme(): string {
+			return localStorage.getItem('theme') || 'system';
+		}
+
+		function setTheme(theme: string) {
+			if (theme === 'system') {
+				localStorage.removeItem('theme');
+				document.documentElement.removeAttribute('data-theme');
+			} else {
+				localStorage.setItem('theme', theme);
+				document.documentElement.setAttribute('data-theme', theme);
+			}
+			updateButtons(theme);
+		}
+
+		function updateButtons(theme: string) {
+			buttons.forEach((btn) => {
+				const isActive = btn.dataset.themeBtn === theme;
+				btn.style.opacity = isActive ? '1' : '0.4';
+				btn.setAttribute('aria-pressed', String(isActive));
+			});
+		}
+
+		buttons.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const theme = btn.dataset.themeBtn;
+				if (theme) setTheme(theme);
+			});
+		});
+
+		updateButtons(getTheme());
+	}
+
+	initThemeToggle();
+	document.addEventListener('astro:after-swap', initThemeToggle);
+	document.addEventListener('astro:page-load', initThemeToggle);
+</script>

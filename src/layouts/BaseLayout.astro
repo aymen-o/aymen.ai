@@ -1,0 +1,97 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import GrainCanvas from '../components/GrainCanvas.astro';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+	ogImage?: string;
+}
+
+const {
+	title = 'Aymen El Akbari',
+	description = 'Full-stack developer & entrepreneur building AI products from Quebec City.',
+	ogImage = '/og/default.png',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = title === 'Aymen El Akbari' ? 'aymen.ai' : `${title} — aymen.ai`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{fullTitle}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalURL} />
+
+		<!-- Open Graph -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={new URL(ogImage, Astro.site)} />
+
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:creator" content="@aymenakx" />
+		<meta name="twitter:title" content={fullTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
+		<!-- JSON-LD Structured Data -->
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify({
+				'@context': 'https://schema.org',
+				'@type': 'WebSite',
+				name: 'aymen.ai',
+				url: 'https://aymen.ai',
+				author: {
+					'@type': 'Person',
+					name: 'Aymen El Akbari',
+					url: 'https://aymen.ai',
+					jobTitle: 'Full-Stack Developer & Entrepreneur',
+					sameAs: [
+						'https://www.linkedin.com/in/aymen-el-akbari/',
+						'https://x.com/aymenakx',
+						'https://github.com/aymen-o',
+					],
+				},
+			})}
+		/>
+
+		<!-- Favicon -->
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+		<!-- Theme initialization (blocking, prevents flash) -->
+		<script is:inline>
+			function applyStoredTheme() {
+				const stored = localStorage.getItem('theme');
+				if (stored === 'dark' || stored === 'light') {
+					document.documentElement.setAttribute('data-theme', stored);
+				} else {
+					document.documentElement.removeAttribute('data-theme');
+				}
+			}
+			applyStoredTheme();
+			document.addEventListener('astro:after-swap', applyStoredTheme);
+			document.addEventListener('astro:page-load', applyStoredTheme);
+		</script>
+
+		<ViewTransitions />
+	</head>
+	<body class="min-h-screen bg-bg text-text">
+		<a
+			href="#main-content"
+			class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded focus:bg-bg focus:px-4 focus:py-2 focus:text-text focus:ring-2 focus:ring-text font-mono text-sm"
+		>
+			Skip to content
+		</a>
+		<GrainCanvas />
+		<slot />
+	</body>
+</html>

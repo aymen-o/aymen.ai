@@ -1,0 +1,52 @@
+---
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	url?: string;
+	repo?: string;
+	status: 'active' | 'shipped' | 'sunset' | 'building' | 'employed' | 'running';
+	tags: string[];
+}
+
+const { title, description, url, repo, status, tags } = Astro.props;
+---
+
+<div class="py-4">
+	<div class="flex items-start justify-between gap-4">
+		<div>
+			<h3 class="font-mono text-sm font-medium">
+				{url ? (
+					<a href={url} target="_blank" rel="noopener noreferrer" class="hover:underline underline-offset-4">
+						{title}
+					</a>
+				) : (
+					title
+				)}
+			</h3>
+			<p class="mt-1 text-sm text-text-secondary">{description}</p>
+		</div>
+		<StatusBadge status={status} />
+	</div>
+
+	<div class="mt-2 flex items-center gap-3">
+		<div class="flex gap-2">
+			{tags.map((tag: string) => (
+				<span class="rounded bg-bg-secondary px-1.5 py-0.5 font-mono text-xs text-text-secondary">
+					{tag}
+				</span>
+			))}
+		</div>
+		{repo && (
+			<a
+				href={repo}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="font-mono text-xs text-text-secondary hover:text-text transition-colors"
+			>
+				source →
+			</a>
+		)}
+	</div>
+</div>

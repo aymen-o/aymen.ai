@@ -1,0 +1,24 @@
+---
+interface Props {
+	status: 'active' | 'shipped' | 'sunset' | 'building' | 'employed' | 'running' | 'exited';
+}
+
+const { status } = Astro.props;
+
+const config: Record<string, { color: string; label: string }> = {
+	active: { color: 'bg-green-500', label: 'active' },
+	shipped: { color: 'bg-text', label: 'shipped' },
+	building: { color: 'bg-orange-500', label: 'building in public' },
+	sunset: { color: 'bg-gray-500', label: 'sunset' },
+	employed: { color: 'bg-blue-500', label: 'employed' },
+	running: { color: 'bg-green-500', label: 'running' },
+	exited: { color: 'bg-purple-500', label: 'exited' },
+};
+
+const { color, label } = config[status] || config.active;
+---
+
+<span class="inline-flex items-center gap-1.5 font-mono text-xs text-text-secondary">
+	<span class={`inline-block h-1.5 w-1.5 rounded-full ${color}`}></span>
+	{label}
+</span>

@@ -1,0 +1,58 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import ShareLinks from '../components/ShareLinks.astro';
+import { calculateReadingTime, formatDateFull } from '../lib/utils';
+
+interface Props {
+	title: string;
+	description: string;
+	date: Date;
+	tags?: string[];
+	content: string;
+	ogImage?: string;
+}
+
+const { title, description, date, tags = [], content, ogImage } = Astro.props;
+const readingTime = calculateReadingTime(content);
+const formattedDate = formatDateFull(date);
+const fullUrl = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<BaseLayout title={title} description={description} ogImage={ogImage}>
+	<Nav />
+	<main id="main-content" class="mx-auto max-w-2xl px-6 py-16">
+		<article>
+			<header class="mb-10">
+				<a href="/blog" class="font-mono text-sm text-text-secondary hover:text-text transition-colors">
+					← back to blog
+				</a>
+				<h1 class="mt-4 font-mono text-2xl font-semibold leading-tight">
+					{title}
+				</h1>
+				<div class="mt-3 flex items-center gap-3 font-mono text-sm text-text-secondary">
+					<time datetime={date.toISOString()}>{formattedDate}</time>
+					<span>·</span>
+					<span>{readingTime}</span>
+				</div>
+				{tags.length > 0 && (
+					<div class="mt-2 flex gap-2">
+						{tags.map((tag: string) => (
+							<span class="font-mono text-xs text-text-secondary">#{tag}</span>
+						))}
+					</div>
+				)}
+			</header>
+
+			<div class="prose">
+				<slot />
+			</div>
+
+			<footer class="mt-12 border-t border-border pt-6">
+				<ShareLinks title={title} url={fullUrl} />
+			</footer>
+		</article>
+	</main>
+	<Footer />
+</BaseLayout>

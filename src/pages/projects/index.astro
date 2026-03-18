@@ -1,0 +1,59 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects'))
+	.sort((a, b) => a.data.order - b.data.order);
+
+const statusColors: Record<string, string> = {
+	active: 'bg-green-500',
+	shipped: 'bg-gray-400',
+	building: 'bg-orange-500',
+	running: 'bg-blue-500',
+	sunset: 'bg-gray-600',
+	employed: 'bg-blue-400',
+	exited: 'bg-purple-500',
+};
+---
+
+<PageLayout title="Projects" description="Products, businesses, and experiments.">
+	<h1 class="font-mono text-xs font-medium uppercase tracking-[0.1em] text-text-secondary">* building</h1>
+	<p class="mt-3 text-text-secondary">
+		Products, businesses, and experiments.
+	</p>
+
+	<div class="mt-8">
+		{projects.map((project) => (
+			<div class="hover-row -mx-3 rounded-lg px-3 py-4 transition-all duration-150 hover:translate-x-1 hover:bg-[rgba(255,255,255,0.03)]">
+				<div class="flex items-start justify-between gap-4">
+					<div>
+						<h2 class="font-mono text-sm font-bold">
+							{project.data.url ? (
+								<a href={project.data.url} target="_blank" rel="noopener noreferrer" class="underline-offset-4 hover:underline">
+									{project.data.title}
+								</a>
+							) : (
+								project.data.title
+							)}
+						</h2>
+						<p class="mt-1 text-sm leading-relaxed text-text-secondary">{project.body?.trim() || project.data.description}</p>
+					</div>
+					<span class="inline-flex shrink-0 items-center gap-1.5 font-mono text-xs text-text-secondary">
+						<span class={`inline-block h-1.5 w-1.5 rounded-full ${statusColors[project.data.status] || 'bg-gray-400'}`}></span>
+						{project.data.status}
+					</span>
+				</div>
+				<div class="mt-2 flex flex-wrap items-center gap-2">
+					{project.data.tags.map((tag: string) => (
+						<span class="rounded-full border border-border px-2 py-0.5 font-mono text-xs text-text-secondary">{tag}</span>
+					))}
+					{project.data.repo && (
+						<a href={project.data.repo} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-text-secondary transition-opacity hover:opacity-80">
+							source →
+						</a>
+					)}
+				</div>
+			</div>
+		))}
+	</div>
+</PageLayout>

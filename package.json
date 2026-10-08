@@ -13,7 +13,9 @@
     "preview": "astro preview",
     "verify:deployment": "node scripts/verify-deployment.mjs",
     "audit": "npm audit --audit-level=low",
-    "qa:site": "node scripts/check-site.mjs"
+    "qa:site": "node scripts/check-site.mjs",
+    "test:deployment": "node --test scripts/verify-deployment.test.mjs",
+    "validate": "npm run check && npm run test:deployment && npm run build && npm run qa:site"
   },
   "author": "Aymen El Akbari",
   "license": "MIT",

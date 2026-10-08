@@ -14,12 +14,12 @@ npm run dev
 ## Verify and build
 
 ```sh
-npm run check
-npm run build
-npm run qa:site
+npm run validate
 npm run audit
 npm run preview
 ```
+
+GitHub Actions validates every pull request and push to `main` using Node.js 22. Vercel runs the same `npm run validate` command before publishing: type checking, deployment-verifier regression tests, the static build, and site QA. The workflow has read-only repository permissions, pins its actions to commit SHAs, and requires no deployment credentials.
 
 The build generates static pages in all three languages. It fails if scripts violate the generated Content Security Policy, source maps or private files enter the output, or inline event handlers appear. `qa:site` checks routes, local links, heading hierarchy, identity metadata, language alternates, image dimensions, and removal of retired Notes URLs.
 
@@ -28,6 +28,8 @@ After deploying to Vercel:
 ```sh
 npm run verify:deployment -- https://aymen.ca
 ```
+
+The live verifier checks all nine localized pages against their exact deployment paths and production canonical URLs. It rejects unexpected redirects before forwarding any optional Vercel bypass header, and checks retired and unknown routes return 404. Private-path probes permit only a single same-origin redirect that adds a trailing slash, as required by Vercel’s route normalization. Run it after deploying; the mocked regression tests run during validation without network access.
 
 Browser checks are still needed for layout, keyboard navigation, theme controls, and translations. The static checks are not a substitute for browser testing.
 

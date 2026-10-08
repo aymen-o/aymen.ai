@@ -1,9 +1,11 @@
 ---
-title: "[stealth]"
-description: "AI-powered tools for home-service businesses."
-status: "active"
-tags: ["TypeScript", "AI", "SaaS"]
-order: 1
+title: "Tools for service businesses"
+description: "Independent work on workflow automation and instant quoting."
+locale: en
+translationKey: workflow-tools
+status: building
+tags: ["Automation", "AI"]
+order: 2
 ---
 
-AI-powered tools & widgets for home-service businesses. Built as a SaaS product.
+Practical tools for service businesses in Québec, Montréal, and Toronto. The focus is on automating workflows and helping businesses respond to quote requests. Work in progress.

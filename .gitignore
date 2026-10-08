@@ -3,4 +3,13 @@ dist/
 .vercel/
 .astro/
 *.env
+.env
+.env.*
+!.env.example
+.firecrawl/
+work/
+coverage/
+playwright-report/
+test-results/
+*.log
 .DS_Store

@@ -1,0 +1,16 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import PostList from '../PostList.astro';
+import { getCollection } from 'astro:content';
+import { getCopy, type Locale } from '../../lib/i18n';
+interface Props { locale?: Locale; }
+const { locale = 'en' } = Astro.props;
+const copy = getCopy(locale);
+const posts = (await getCollection('blog', ({ data }) => !data.draft && data.locale === locale)).sort((a,b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<PageLayout title={copy.blog.title} description={copy.blog.description} locale={locale}>
+  <h1 class="font-mono text-2xl font-semibold">{copy.blog.title}</h1>
+  <p class="mt-4 leading-relaxed text-text-secondary">{copy.blog.description}</p>
+  <div class="mt-8"><PostList posts={posts} locale={locale} detailed /></div>
+  {posts.length === 0 && <p>{copy.blog.empty}</p>}
+</PageLayout>

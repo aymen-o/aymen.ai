@@ -1,10 +1,11 @@
 ---
 title: "owood"
-description: "Sustainable wooden watch brand. Crowdfunded, built from scratch, acquired in 2020."
-status: "exited"
-tags: ["Shopify", "Ruby", "E-commerce", "UX UI"]
-order: 99
+description: "A wooden watch brand I founded at 18. Acquired in 2020."
+locale: en
+translationKey: owood
+status: exited
+tags: ["Shopify", "E-commerce", "Entrepreneurship"]
+order: 3
 ---
 
-Founded a watch brand at 18. Built a custom Shopify storefront with an interactive watch configurator that let customers pick wood type, strap, and engraving. Bootstrapped the initial run through crowdfunding, grew from concept to revenue handling everything end to end.
-Successfully acquired in 2020 by a watch enthusiast.
+Built a wooden watch brand from the first concept to revenue, with a Kickstarter-funded launch. I handled product development, branding, the Shopify store, marketing, and fulfillment. The business was acquired by a private buyer in 2020.

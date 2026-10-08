@@ -1,0 +1,41 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getCopy, type Locale } from '../../lib/i18n';
+import { SITE } from '../../lib/constants';
+interface Props { locale?: Locale; }
+const { locale = 'en' } = Astro.props;
+const copy = getCopy(locale);
+const skills = ['TypeScript', 'Vue.js', 'React', 'Node.js', 'C# / ASP.NET', 'Python', 'PHP', 'SQL', 'REST APIs', 'Docker'];
+---
+<PageLayout title={copy.about.title} description={copy.about.description} locale={locale}>
+  <article>
+    <h1 class="font-mono text-2xl font-semibold">{copy.about.title}</h1>
+    <div class="mt-6 space-y-4 leading-[1.8] text-text-secondary">{copy.about.intro.map(paragraph => <p>{paragraph}</p>)}</div>
+    <section class="mt-12 border-t border-border pt-6">
+      <h2 class="section-heading">{copy.about.workTitle}</h2>
+      <div class="mt-4 space-y-4 leading-[1.8] text-text-secondary">{copy.about.work.map(paragraph => <p>{paragraph}</p>)}</div>
+    </section>
+    <section class="mt-12 border-t border-border pt-6">
+      <h2 class="section-heading">{copy.about.experienceTitle}</h2>
+      <ol class="mt-6 space-y-8">{copy.about.experience.map(item => <li class="border-s-2 border-border ps-4">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"><h3 class="font-mono text-sm font-semibold"><bdi>{item.company}</bdi></h3><p class="font-mono text-xs text-text-secondary">{item.period}</p></div>
+        <p class="mt-1 text-sm">{item.role}</p>
+        <p class="mt-2 text-sm leading-relaxed text-text-secondary">{item.description}</p>
+      </li>)}</ol>
+    </section>
+    <section class="mt-12 border-t border-border pt-6">
+      <h2 class="section-heading">{copy.about.skillsTitle}</h2>
+      <ul class="mt-4 flex flex-wrap gap-2">{skills.map(skill => <li class="rounded-full border border-border px-3 py-1.5 font-mono text-xs"><bdi>{skill}</bdi></li>)}</ul>
+    </section>
+    <section class="mt-12 border-t border-border pt-6">
+      <h2 class="section-heading">{copy.about.educationTitle}</h2>
+      <div class="mt-5 space-y-5">{copy.about.education.map(item => <div><h3 class="text-sm font-medium"><bdi>{item.school}</bdi></h3><p class="mt-1 text-sm text-text-secondary">{item.degree}</p><p class="mt-1 font-mono text-xs text-text-secondary"><bdi>{item.period}</bdi></p></div>)}</div>
+    </section>
+    <section class="mt-12 border-t border-border pt-6">
+      <h2 class="section-heading">{copy.about.languagesTitle}</h2>
+      <p class="mt-4 text-text-secondary">{copy.about.languages.join(' · ')}</p>
+    </section>
+    <a href={`mailto:${SITE.email}`} class="mt-10 inline-flex min-h-11 items-center gap-2 font-mono text-sm underline underline-offset-4">{copy.common.contact}<span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span></a>
+  </article>
+</PageLayout>
+<style>.section-heading { font-family: var(--font-mono); font-size: .75rem; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-secondary); }:global([lang="ar"]) .section-heading { font-family: var(--font-arabic); letter-spacing: normal; }</style>

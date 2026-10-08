@@ -1,164 +1,22 @@
 ---
+// A static tile keeps the original grain without a canvas or animation loop.
 ---
-<canvas
-	id="grain-canvas"
-	class="pointer-events-none fixed inset-0 -z-10"
-	aria-hidden="true"
-></canvas>
+<div class="grain-texture" aria-hidden="true"></div>
 
-<script>
-	function initGrain() {
-		const canvas = document.getElementById('grain-canvas') as HTMLCanvasElement | null;
-		if (!canvas) return;
-
-		// Respect reduced motion
-		const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		const isMobile = window.innerWidth < 768;
-
-		const gl = canvas.getContext('webgl2');
-		if (!gl) return;
-
-		// Vertex shader - full-screen quad
-		const vsSource = `#version 300 es
-    in vec2 a_position;
-    void main() {
-      gl_Position = vec4(a_position, 0.0, 1.0);
-    }`;
-
-		// Fragment shader - hash-based grain
-		const fsSource = `#version 300 es
-    precision highp float;
-    uniform float u_time;
-    uniform vec2 u_resolution;
-    uniform vec2 u_mouse;
-    uniform float u_intensity;
-    out vec4 fragColor;
-
-    float hash(vec2 p) {
-      vec3 p3 = fract(vec3(p.xyx) * 0.1031);
-      p3 += dot(p3, p3.yzx + 33.33);
-      return fract((p3.x + p3.y) * p3.z);
-    }
-
-    void main() {
-      vec2 uv = gl_FragCoord.xy / u_resolution;
-      float grain = hash(gl_FragCoord.xy + u_time * 100.0) - 0.5;
-
-      // Mouse proximity boost
-      vec2 mouseUV = u_mouse / u_resolution;
-      float dist = distance(uv, mouseUV);
-      float boost = smoothstep(0.3, 0.0, dist) * 0.15;
-
-      float alpha = u_intensity + boost;
-      fragColor = vec4(vec3(grain), alpha);
-    }`;
-
-		function compileShader(type: number, source: string): WebGLShader | null {
-			const shader = gl!.createShader(type);
-			if (!shader) return null;
-			gl!.shaderSource(shader, source);
-			gl!.compileShader(shader);
-			if (!gl!.getShaderParameter(shader, gl!.COMPILE_STATUS)) {
-				gl!.deleteShader(shader);
-				return null;
-			}
-			return shader;
-		}
-
-		const vs = compileShader(gl.VERTEX_SHADER, vsSource);
-		const fs = compileShader(gl.FRAGMENT_SHADER, fsSource);
-		if (!vs || !fs) return;
-
-		const program = gl.createProgram()!;
-		gl.attachShader(program, vs);
-		gl.attachShader(program, fs);
-		gl.linkProgram(program);
-		if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
-
-		gl.useProgram(program);
-
-		// Full-screen quad
-		const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
-		const buffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-		const posLoc = gl.getAttribLocation(program, 'a_position');
-		gl.enableVertexAttribArray(posLoc);
-		gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
-
-		// Uniforms
-		const uTime = gl.getUniformLocation(program, 'u_time');
-		const uResolution = gl.getUniformLocation(program, 'u_resolution');
-		const uMouse = gl.getUniformLocation(program, 'u_mouse');
-		const uIntensity = gl.getUniformLocation(program, 'u_intensity');
-
-		let mouseX = 0;
-		let mouseY = 0;
-
-		if (!isMobile) {
-			document.addEventListener('mousemove', (e) => {
-				mouseX = e.clientX;
-				mouseY = canvas.height - e.clientY;
-			});
-		}
-
-		function resize() {
-			const dpr = Math.min(window.devicePixelRatio, 2);
-			canvas!.width = window.innerWidth * dpr;
-			canvas!.height = window.innerHeight * dpr;
-			canvas!.style.width = window.innerWidth + 'px';
-			canvas!.style.height = window.innerHeight + 'px';
-			gl!.viewport(0, 0, canvas!.width, canvas!.height);
-		}
-
-		window.addEventListener('resize', resize);
-		resize();
-
-		// Get intensity based on theme
-		function getIntensity(): number {
-			const theme = document.documentElement.getAttribute('data-theme');
-			if (theme === 'light') return 0.05;
-			if (theme === 'dark') return 0.07;
-			return window.matchMedia('(prefers-color-scheme: light)').matches ? 0.05 : 0.07;
-		}
-
-		gl.enable(gl.BLEND);
-		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-		if (prefersReducedMotion || isMobile) {
-			// Single static frame
-			gl.uniform1f(uTime, 0);
-			gl.uniform2f(uResolution, canvas.width, canvas.height);
-			gl.uniform2f(uMouse, 0, 0);
-			gl.uniform1f(uIntensity, getIntensity());
-			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-			return;
-		}
-
-		// Animate at ~24fps
-		const frameInterval = 1000 / 24;
-		let lastFrame = 0;
-
-		function render(time: number) {
-			if (time - lastFrame >= frameInterval) {
-				lastFrame = time;
-				gl!.uniform1f(uTime, time * 0.001);
-				gl!.uniform2f(uResolution, canvas!.width, canvas!.height);
-				gl!.uniform2f(
-					uMouse,
-					mouseX * Math.min(window.devicePixelRatio, 2),
-					mouseY * Math.min(window.devicePixelRatio, 2),
-				);
-				gl!.uniform1f(uIntensity, getIntensity());
-				gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);
-			}
-			requestAnimationFrame(render);
-		}
-
-		requestAnimationFrame(render);
+<style>
+	.grain-texture {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		opacity: 0.055;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+		background-size: 160px 160px;
 	}
 
-	initGrain();
-	document.addEventListener('astro:after-swap', initGrain);
-</script>
+	@media (forced-colors: active) {
+		.grain-texture {
+			display: none;
+		}
+	}
+</style>

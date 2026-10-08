@@ -1,9 +1,12 @@
 ---
 title: "[stealth]"
 description: "AI sovereignty. Early-stage testing."
-status: "active"
+locale: en
+translationKey: stealth-2
+status: active
 tags: ["Python", "LLM", "Privacy", "Quebec"]
-order: 2
+order: 99
+draft: true
 ---
 
 Privacy-first AI. Early-stage testing.

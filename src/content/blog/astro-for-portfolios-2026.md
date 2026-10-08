@@ -1,31 +1,36 @@
 ---
-title: "Why Astro is the right choice for dev portfolios in 2026"
-description: "A practical comparison of Astro vs Next.js, Remix, and Hugo for developer portfolios — and why content-first wins."
+title: "Why this portfolio uses Astro"
+description: "Static pages, Markdown, and a little JavaScript: the choices behind this site."
 date: 2026-02-15
-tags: ["astro", "web-dev", "opinion"]
+updated: 2026-10-08
+locale: en
+translationKey: astro-for-portfolios-2026
+tags: ["Astro", "Web"]
 draft: false
 ---
 
-Every few months, someone on X asks: "What should I use for my personal site?" The replies are predictable ; Next.js fans say Next, Hugo fans say Hugo, and someone always suggests raw HTML.
+This site has a small job: explain what I do, show a few projects, and give people a way to reach me. Most of its content is text. That makes a static site a practical fit.
 
-Here's my take after building with all of them: **Astro wins for developer portfolios in 2026**, and it's not close.
+## Pages first
 
-## The Content-First Advantage
+Astro builds the pages ahead of time. The browser receives HTML for the content, with CSS for the layout and a little JavaScript for interactions such as the theme controls and navigation.
 
-A portfolio is fundamentally a content site. Blog posts, project descriptions, an about page. You don't need React hydration for a list of links. You don't need server-side rendering for static prose.
+The useful distinction here is between reading and interacting. Reading an article or following a project link should work without waiting for an application to start. The interactive parts can stay small.
 
-Astro ships zero JavaScript by default. Your Lighthouse score starts at 100 and you work to keep it there, rather than starting at 60 and fighting your framework.
+## Content alongside the code
 
-## Islands When You Need Them
+The articles and project descriptions live in Markdown files. Each has structured fields for its title, description, language, and other metadata. Astro's content collections check those fields during the build.
 
-The one interactive element on aymen.ai is the theme toggle. That's a single Astro island, a few kilobytes of client-side JavaScript, loaded only when needed. Everything else is static HTML and CSS.
+For a site this size, editing a file is enough. There is no separate publishing dashboard or database to maintain. A larger editorial team would have different needs.
 
-Compare this to Next.js, where your entire page is a React component even if it's just rendering markdown. The bundle tax is real, and for a portfolio, it's pure waste.
+## Three languages, separate pages
 
-## Content Collections Are Underrated
+English, French, and Arabic each have their own pages. A language switch links to the equivalent page, and Arabic uses a right-to-left layout. Keeping translations in the content files makes it possible to review the wording as part of a site update.
 
-Astro's content collections give you type-safe frontmatter validation, automatic slug generation, and reading time calculation, all at build time. No CMS, no database, no API calls. Just markdown files and TypeScript schemas.
+Translation is more than changing a navigation label. Page titles, descriptions, dates, accessibility labels, and reading order all need attention too.
 
-## The Verdict
+## A deliberately small setup
 
-If you're building a SaaS app, use Next.js. If you're building a developer portfolio, blog, or documentation site, Astro is the answer. It optimizes for the right things: performance, simplicity, and content.
+Astro fits this particular site because the content changes occasionally and most visitors are here to read. I do not need the same architecture I would choose for a signed-in product with live data.
+
+The goal is straightforward: make the site easy to read, easy to update, and quick to open. The framework helps with that, but the content and the details still need work.

@@ -1,27 +1,36 @@
 ---
-title: "Building aymen.ai → Why I open-sourced my portfolio"
-description: "The decisions behind building a developer portfolio from scratch with Astro, and why every line of code is public."
+title: "Keeping a personal site simple"
+description: "A few decisions behind aymen.ca: a quiet layout, useful content, and fewer moving parts."
 date: 2026-03-19
-tags: ["astro", "open-source", "portfolio"]
+updated: 2026-10-08
+locale: en
+translationKey: building-aymen-ai
+tags: ["Portfolio", "Design"]
 draft: false
 ---
 
-Most developer portfolios are either over-engineered showcases of animation libraries or underwhelming single-page templates. I wanted something different ; a site where the code quality *is* the portfolio.
+A personal site is often the next tab someone opens after a résumé or a LinkedIn profile. It should help them understand who I am and what I have worked on, without making that information hard to find.
 
-## Why Open Source?
+## Keep the useful parts
 
-When a technical reviewer lands on your site, the first thing they do is open DevTools. The second thing they do is check if there's a GitHub link. If both are clean, you've already passed the first filter.
+The site uses a narrow reading column, a mostly monochrome palette, and direct links between the main pages. There is room for a little character, including my name in Arabic, without making the layout compete with the words.
 
-By open-sourcing aymen.ai, every architectural decision is visible. The commit history tells a story. The file structure signals taste. And anyone can fork it, learn from it, or call out mistakes.
+A project description should explain the work. An experience entry should make the role and dates clear. Those are more useful here than a long list of tools or a dramatic introduction.
 
-## The Stack
+## Make the basics work
 
-I chose Astro because it's the right tool for content-first sites in 2026. Zero JavaScript by default, island architecture for interactivity, and built-in content collections that make blogging feel native.
+Small interface choices matter: visible keyboard focus, readable contrast, a mobile menu that can be closed from the keyboard, and a layout that still makes sense on a small screen.
 
-Tailwind v4 handles styling. Biome replaces ESLint and Prettier with a single, faster tool. And a custom WebGL grain shader adds the one moment of visual polish that proves the restraint everywhere else was a choice.
+The same applies to motion. Animation can add a little texture, but it should respect a visitor's preference for reduced motion and never be required to read the page.
 
-## What's Next
+## One address, three languages
 
-This is a living project. I'll be adding blog posts about the AI tools I'm building and the lessons learned from experimenting.
+The main address is now **aymen.ca**, and my email remains **hello@aymen.ca**. English, French, and Arabic versions share the same structure so visitors can choose the language that works for them.
 
-The source is at [github.com/aymen-o/aymen.ai](https://github.com/aymen-o/aymen.ai). Star it, fork it, or tell me what I got wrong.
+The original address of this article has been kept so existing links continue to work. An updated site does not need to break its own history.
+
+## Keep maintenance manageable
+
+The site is built from static pages and Markdown content. There is no account system or contact form to operate; email is enough for getting in touch.
+
+Keeping the setup small makes it easier to review changes and notice when something is out of date. This page is part of that process: a short explanation of the current site, with its original publication date and a visible update date.

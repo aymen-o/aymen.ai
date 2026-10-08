@@ -1,0 +1,15 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import ProjectList from '../ProjectList.astro';
+import { getCollection } from 'astro:content';
+import { getCopy, type Locale } from '../../lib/i18n';
+interface Props { locale?: Locale; }
+const { locale = 'en' } = Astro.props;
+const copy = getCopy(locale);
+const projects = (await getCollection('projects', ({ data }) => !data.draft && data.locale === locale)).sort((a,b) => a.data.order - b.data.order);
+---
+<PageLayout title={copy.projects.title} description={copy.projects.description} locale={locale}>
+  <h1 class="font-mono text-2xl font-semibold">{copy.projects.title}</h1>
+  <p class="mt-4 leading-relaxed text-text-secondary">{copy.projects.description}</p>
+  <div class="mt-8"><ProjectList projects={projects} locale={locale} detailed /></div>
+</PageLayout>

@@ -1,0 +1,40 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import ProjectList from '../ProjectList.astro';
+import PostList from '../PostList.astro';
+import { getCollection } from 'astro:content';
+import { getCopy, localizedPath, type Locale } from '../../lib/i18n';
+import { AUTHOR, SITE } from '../../lib/constants';
+interface Props { locale?: Locale; }
+const { locale = 'en' } = Astro.props;
+const copy = getCopy(locale);
+const posts = (await getCollection('blog', ({ data }) => !data.draft && data.locale === locale)).sort((a,b) => b.data.date.getTime() - a.data.date.getTime()).slice(0, 3);
+const projects = (await getCollection('projects', ({ data }) => !data.draft && data.locale === locale)).sort((a,b) => a.data.order - b.data.order).slice(0, 4);
+---
+<PageLayout locale={locale}>
+  <section class="hero relative flex min-h-[60svh] flex-col justify-center py-12 sm:min-h-[65vh] sm:py-16">
+    <div class="relative">
+      <span class="arabic-name pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[60%] select-none font-sans font-bold leading-none" aria-hidden="true" lang="ar" dir="rtl" style="font-size:clamp(6rem,15vw,12rem);opacity:var(--arabic-opacity,0.04)">أيمن</span>
+      <h1 class="relative font-sans text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight">{locale === 'ar' ? AUTHOR.nameArabic : AUTHOR.name}</h1>
+      {locale === 'ar' && <p class="mt-3 text-sm text-text-secondary"><bdi dir="ltr">{AUTHOR.name}</bdi></p>}
+      <p class="relative mt-5 text-[1.1rem] leading-[1.8]">{copy.home.role}</p>
+      <p class="relative mt-1 max-w-lg text-[1.05rem] leading-[1.8] text-text-secondary">{copy.home.intro}</p>
+      <p class="relative mt-3 text-sm leading-[1.8] text-text-secondary">{copy.home.employerPrefix} <a href="https://www.eddyfi.com/" target="_blank" rel="noopener noreferrer" class="font-medium text-text underline-offset-4 hover:underline"><bdi>Eddyfi Technologies / ESAB</bdi></a>.</p>
+      <p class="mt-1 text-sm text-text-secondary">{copy.home.location}</p>
+      <div class="relative mt-7 flex flex-wrap items-center gap-x-6 gap-y-2">
+        <a href={`mailto:${SITE.email}`} dir="ltr" class="inline-flex min-h-11 items-center border-b border-text-secondary font-mono text-sm hover:border-text">{SITE.email}</a>
+        <a href={localizedPath(locale, '/about/')} class="inline-flex min-h-11 items-center gap-2 text-sm text-text-secondary hover:text-text">{copy.home.aboutLink}<span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span></a>
+      </div>
+    </div>
+  </section>
+  <section class="mt-8" aria-labelledby="work-heading">
+    <h2 id="work-heading" class="font-mono text-xs font-medium uppercase tracking-widest text-text-secondary"><span aria-hidden="true">* </span>{copy.home.building}</h2>
+    <div class="mt-4"><ProjectList projects={projects} locale={locale} /></div>
+    <a href={localizedPath(locale, '/projects/')} class="mt-3 inline-flex min-h-11 items-center gap-2 font-mono text-sm text-text-secondary hover:text-text"><span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>{copy.common.allProjects}</a>
+  </section>
+  <section class="mt-16" aria-labelledby="writing-heading">
+    <h2 id="writing-heading" class="font-mono text-xs font-medium uppercase tracking-widest text-text-secondary"><span aria-hidden="true">* </span>{copy.home.writing}</h2>
+    <div class="mt-4"><PostList posts={posts} locale={locale} /></div>
+    <a href={localizedPath(locale, '/blog/')} class="mt-3 inline-flex min-h-11 items-center gap-2 font-mono text-sm text-text-secondary hover:text-text"><span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>{copy.common.allPosts}</a>
+  </section>
+</PageLayout>

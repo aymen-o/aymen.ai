@@ -1,160 +1,65 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-
-const navItems = [
-	{ label: 'home', href: '/' },
-	{ label: 'about', href: '/about' },
-	{ label: 'blog', href: '/blog' },
-	{ label: 'projects', href: '/projects' },
+import { getCopy, locales, localeNames, localizedPath, stripLocale, type Locale } from '../lib/i18n';
+interface Props { locale?: Locale; }
+const { locale = 'en' } = Astro.props;
+const copy = getCopy(locale);
+const current = stripLocale(Astro.url.pathname);
+const path = current.startsWith('/404') ? '/' : current;
+const items = [
+  { label: copy.nav.home, path: '/' }, { label: copy.nav.about, path: '/about/' },
+  { label: copy.nav.blog, path: '/blog/' }, { label: copy.nav.projects, path: '/projects/' },
 ];
-
-const currentPath = Astro.url.pathname;
-
-function isActive(href: string, current: string): boolean {
-	if (href === '/') return current === '/';
-	return current.startsWith(href);
-}
+const active = (href: string) => !current.startsWith('/404') && (href === '/' ? path === '/' : path.startsWith(href));
 ---
-
-<header class="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-lg">
-	<nav class="mx-auto flex max-w-2xl items-center justify-between px-6 py-4">
-		<a href="/" class="font-mono text-sm font-bold tracking-tight transition-colors hover:text-text-secondary">
-			aymen.ai
-		</a>
-
-		<!-- Desktop nav -->
-		<div class="hidden items-center gap-6 sm:flex">
-			{navItems.map((item) => (
-				<a
-					href={item.href}
-					class:list={[
-						'relative font-mono text-sm tracking-wide transition-opacity duration-150',
-						isActive(item.href, currentPath) ? 'opacity-100' : 'opacity-50 hover:opacity-80',
-					]}
-				>
-					{item.label}
-					{isActive(item.href, currentPath) && (
-						<span class="absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-text"></span>
-					)}
-				</a>
-			))}
-			<ThemeToggle />
-		</div>
-
-		<!-- Mobile hamburger -->
-		<button
-			id="mobile-menu-btn"
-			type="button"
-			aria-label="Open menu"
-			class="flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-bg-secondary sm:hidden"
-		>
-			<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-		</button>
-	</nav>
+<header class="site-header sticky top-0 z-50 border-b border-border bg-bg/95 backdrop-blur-lg">
+  <div class="header-row mx-auto flex max-w-2xl items-center gap-3 px-6 py-3">
+    <a href={localizedPath(locale)} class="brand me-auto font-mono text-sm font-bold tracking-tight"><bdi dir="ltr">aymen.ca</bdi></a>
+    <nav class="desktop-nav items-center gap-5" aria-label={copy.nav.label}>
+      {items.map(item => <a href={localizedPath(locale, item.path)} aria-current={active(item.path) ? 'page' : undefined} class="nav-link font-mono text-xs">{item.label}</a>)}
+    </nav>
+    <details class="language-picker relative">
+      <summary aria-label={copy.nav.language} class="control font-mono text-xs"><span dir="ltr">{locale.toUpperCase()}</span><span aria-hidden="true">⌄</span></summary>
+      <div class="language-options rounded-md border border-border bg-bg p-2 shadow-lg">
+        {locales.map(lang => <a href={localizedPath(lang, path)} lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} hreflang={lang} aria-current={lang === locale ? 'true' : undefined} class="block rounded px-3 py-2 text-sm hover:bg-bg-secondary">{localeNames[lang]}</a>)}
+      </div>
+    </details>
+    <ThemeToggle locale={locale} />
+    <details class="mobile-nav">
+      <summary class="control" aria-label={copy.nav.openMenu}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></summary>
+      <nav class="mobile-panel border-b border-border bg-bg px-6 py-4" aria-label={copy.nav.label}>
+        {items.map(item => <a href={localizedPath(locale, item.path)} aria-current={active(item.path) ? 'page' : undefined} class="nav-link block rounded-md px-3 py-3 font-mono text-sm hover:bg-bg-secondary">{item.label}</a>)}
+      </nav>
+    </details>
+  </div>
 </header>
-
-<!-- Mobile overlay -->
-<div id="mobile-menu" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center bg-bg">
-	<button
-		id="mobile-menu-close"
-		type="button"
-		aria-label="Close menu"
-		class="absolute right-6 top-5 flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-bg-secondary"
-	>
-		<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-	</button>
-
-	<div class="flex flex-col items-center gap-8">
-		{navItems.map((item) => (
-			<a
-				href={item.href}
-				class:list={[
-					'font-mono text-2xl transition-opacity duration-150 mobile-nav-link',
-					isActive(item.href, currentPath) ? 'opacity-100' : 'opacity-50 hover:opacity-80',
-				]}
-			>
-				{item.label}
-			</a>
-		))}
-	</div>
-
-	<div class="absolute bottom-12">
-		<ThemeToggle />
-	</div>
-</div>
-
-<!-- Keyboard shortcut toast (first visit only) -->
-<div id="shortcut-toast" class="fixed bottom-6 left-1/2 z-50 hidden -translate-x-1/2 rounded-lg border border-border bg-bg-secondary px-4 py-2 font-mono text-xs text-text-secondary shadow-lg">
-	Tip: press h, a, b, or p to navigate
-</div>
-
+<style>
+  .nav-link { color: var(--text-secondary); min-height: 44px; display: inline-flex; align-items: center; }
+  .nav-link:hover, .nav-link[aria-current='page'] { color: var(--text); }
+  .desktop-nav .nav-link[aria-current='page'] { position: relative; }
+  .desktop-nav .nav-link[aria-current='page']::after { content: ''; position: absolute; inset-block-end: 3px; inset-inline-start: calc(50% - 2px); width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+  .control { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: .3rem; cursor: pointer; list-style: none; border-radius: 4px; }
+  summary::-webkit-details-marker { display: none; }
+  .control:hover { background: var(--bg-secondary); }
+  .language-options { position: absolute; inset-inline-end: 0; inset-block-start: calc(100% + .5rem); min-width: 130px; }
+  .language-options a[aria-current] { text-decoration: underline; text-underline-offset: 4px; }
+  .desktop-nav { display: flex; }
+  .mobile-nav { display: none; }
+  .mobile-panel { position: absolute; inset-inline: 0; inset-block-start: 100%; }
+  .mobile-panel .nav-link { display: flex; }
+  @media (max-width: 639px) { .desktop-nav { display: none; } .mobile-nav { display: block; } .header-row { gap: .25rem; } }
+</style>
 <script>
-	function initNav() {
-		// Mobile menu
-		const menuBtn = document.getElementById('mobile-menu-btn');
-		const menu = document.getElementById('mobile-menu');
-		const closeBtn = document.getElementById('mobile-menu-close');
-
-		if (menuBtn && menu && closeBtn) {
-			menuBtn.addEventListener('click', () => {
-				menu.classList.remove('hidden');
-				menu.classList.add('flex');
-			});
-			closeBtn.addEventListener('click', () => {
-				menu.classList.add('hidden');
-				menu.classList.remove('flex');
-			});
-			menu.querySelectorAll('.mobile-nav-link').forEach((link) => {
-				link.addEventListener('click', () => {
-					menu.classList.add('hidden');
-					menu.classList.remove('flex');
-				});
-			});
-		}
-
-		// Keyboard shortcuts
-		const shortcuts: Record<string, string> = {
-			h: '/',
-			a: '/about',
-			b: '/blog',
-			p: '/projects',
-		};
-
-		document.addEventListener('keydown', (e) => {
-			if (
-				e.target instanceof HTMLInputElement ||
-				e.target instanceof HTMLTextAreaElement ||
-				(e.target as HTMLElement)?.isContentEditable ||
-				e.metaKey || e.ctrlKey || e.altKey
-			) return;
-
-			const href = shortcuts[e.key];
-			if (href) {
-				// Dismiss toast on any shortcut press
-				const toast = document.getElementById('shortcut-toast');
-				if (toast) toast.classList.add('hidden');
-				localStorage.setItem('shortcut-seen', '1');
-
-				if (window.location.pathname !== href) {
-					window.location.href = href;
-				}
-			}
-		});
-
-		// First-visit toast
-		if (!localStorage.getItem('shortcut-seen')) {
-			const toast = document.getElementById('shortcut-toast');
-			if (toast) {
-				setTimeout(() => toast.classList.remove('hidden'), 1000);
-				setTimeout(() => {
-					toast.classList.add('hidden');
-					localStorage.setItem('shortcut-seen', '1');
-				}, 6000);
-			}
-		}
-	}
-
-	initNav();
-	document.addEventListener('astro:after-swap', initNav);
-	document.addEventListener('astro:page-load', initNav);
+  // Native details keeps navigation available without JavaScript.
+  const menus = document.querySelectorAll<HTMLDetailsElement>('.site-header details');
+  menus.forEach(menu => {
+    menu.addEventListener('toggle', () => { if (menu.open) menus.forEach(other => { if (other !== menu) other.open = false; }); });
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    menus.forEach(menu => { if (menu.open) { menu.open = false; menu.querySelector<HTMLElement>('summary')?.focus(); } });
+  });
+  document.addEventListener('click', event => {
+    menus.forEach(menu => { if (event.target instanceof Node && !menu.contains(event.target)) menu.open = false; });
+  });
 </script>

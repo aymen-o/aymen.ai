@@ -1,97 +1,85 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { createHash } from 'node:crypto';
 import GrainCanvas from '../components/GrainCanvas.astro';
+import { SITE, AUTHOR, SOCIAL_LINKS } from '../lib/constants';
+import { getCopy, locales, localizedPath, stripLocale, type Locale } from '../lib/i18n';
 import '../styles/global.css';
-
 interface Props {
-	title?: string;
-	description?: string;
-	ogImage?: string;
+  title?: string; description?: string; ogImage?: string; locale?: Locale;
+  article?: { published: Date; updated?: Date }; noindex?: boolean;
 }
-
-const {
-	title = 'Aymen El Akbari',
-	description = 'Full-stack developer & entrepreneur building AI products from Quebec City.',
-	ogImage = '/og/default.png',
-} = Astro.props;
-
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const fullTitle = title === 'Aymen El Akbari' ? 'aymen.ai' : `${title} — aymen.ai`;
+const { title, description, ogImage = '/og/default.png', locale = 'en', article, noindex = false } = Astro.props;
+const copy = getCopy(locale);
+const pageDescription = description || copy.home.description;
+const fullTitle = title ? `${title} — ${AUTHOR.name}` : `${AUTHOR.name} — ${copy.home.role}`;
+const path = stripLocale(Astro.url.pathname);
+const canonicalURL = new URL(noindex ? '/404.html' : localizedPath(locale, path), SITE.url);
+const ogLocale = { en: 'en_CA', fr: 'fr_CA', ar: 'ar' };
+const personId = `${SITE.url}/#person`;
+const themeInit = "try{const theme=localStorage.getItem('theme');if(theme==='dark'||theme==='light')document.documentElement.dataset.theme=theme;}catch{}";
+Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(themeInit).digest('base64')}`);
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Person', '@id': personId, name: AUTHOR.name, alternateName: AUTHOR.nameArabic,
+      url: `${SITE.url}/`, jobTitle: AUTHOR.role, sameAs: SOCIAL_LINKS.map(link => link.url),
+      knowsLanguage: ['en', 'fr', 'ar'], homeLocation: { '@type': 'City', name: 'Québec City' },
+      alumniOf: { '@type': 'CollegeOrUniversity', name: 'Université Laval' } },
+    { '@type': 'WebSite', '@id': `${SITE.url}/#website`, name: AUTHOR.name, url: `${SITE.url}/`,
+      inLanguage: ['en', 'fr', 'ar'], publisher: { '@id': personId } },
+    { '@type': article ? 'BlogPosting' : path === '/about/' ? 'AboutPage' : 'WebPage',
+      '@id': canonicalURL.toString(), url: canonicalURL.toString(), name: fullTitle,
+      description: pageDescription, inLanguage: locale, isPartOf: { '@id': `${SITE.url}/#website` },
+      about: { '@id': personId }, ...(article ? { headline: title, author: { '@id': personId },
+        datePublished: article.published.toISOString(), dateModified: (article.updated || article.published).toISOString(),
+        image: new URL(ogImage, SITE.url).toString() } : {}) },
+  ],
+};
 ---
-
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{fullTitle}</title>
-		<meta name="description" content={description} />
-		<link rel="canonical" href={canonicalURL} />
-
-		<!-- Open Graph -->
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content={canonicalURL} />
-		<meta property="og:title" content={fullTitle} />
-		<meta property="og:description" content={description} />
-		<meta property="og:image" content={new URL(ogImage, Astro.site)} />
-
-		<!-- Twitter -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:creator" content="@aymenakx" />
-		<meta name="twitter:title" content={fullTitle} />
-		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
-		<!-- JSON-LD Structured Data -->
-		<script
-			type="application/ld+json"
-			set:html={JSON.stringify({
-				'@context': 'https://schema.org',
-				'@type': 'WebSite',
-				name: 'aymen.ai',
-				url: 'https://aymen.ai',
-				author: {
-					'@type': 'Person',
-					name: 'Aymen El Akbari',
-					url: 'https://aymen.ai',
-					jobTitle: 'Full-Stack Developer & Entrepreneur',
-					sameAs: [
-						'https://www.linkedin.com/in/aymen-el-akbari/',
-						'https://x.com/aymenakx',
-						'https://github.com/aymen-o',
-					],
-				},
-			})}
-		/>
-
-		<!-- Favicon -->
-		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-
-		<!-- Theme initialization (blocking, prevents flash) -->
-		<script is:inline>
-			function applyStoredTheme() {
-				const stored = localStorage.getItem('theme');
-				if (stored === 'dark' || stored === 'light') {
-					document.documentElement.setAttribute('data-theme', stored);
-				} else {
-					document.documentElement.removeAttribute('data-theme');
-				}
-			}
-			applyStoredTheme();
-			document.addEventListener('astro:after-swap', applyStoredTheme);
-			document.addEventListener('astro:page-load', applyStoredTheme);
-		</script>
-
-		<ViewTransitions />
-	</head>
-	<body class="min-h-screen bg-bg text-text">
-		<a
-			href="#main-content"
-			class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded focus:bg-bg focus:px-4 focus:py-2 focus:text-text focus:ring-2 focus:ring-text font-mono text-sm"
-		>
-			Skip to content
-		</a>
-		<GrainCanvas />
-		<slot />
-	</body>
+<html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="author" content={AUTHOR.name} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="canonical" href={canonicalURL} />
+    {!noindex && locales.map(lang => <link rel="alternate" hreflang={lang} href={new URL(localizedPath(lang, path), SITE.url)} />)}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={new URL(localizedPath('en', path), SITE.url)} />}
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:site_name" content={AUTHOR.name} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={new URL(ogImage, SITE.url)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${AUTHOR.name} · aymen.ca`} />
+    <meta property="og:locale" content={ogLocale[locale]} />
+    {locales.filter(lang => lang !== locale).map(lang => <meta property="og:locale:alternate" content={ogLocale[lang]} />)}
+    {article && <meta property="article:published_time" content={article.published.toISOString()} />}
+    {article?.updated && <meta property="article:modified_time" content={article.updated.toISOString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@aymenakx" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={new URL(ogImage, SITE.url)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />
+    <script is:inline set:html={themeInit} />
+  </head>
+  <body class="min-h-screen bg-bg text-text">
+    <a href="#main-content" class="skip-link">{copy.common.skipToContent}</a>
+    <GrainCanvas />
+    <slot />
+  </body>
 </html>
+<style>
+  .skip-link { position: fixed; inset-block-start: .75rem; inset-inline-start: .75rem; z-index: 100; padding: .75rem 1rem; background: var(--bg); border: 1px solid var(--text); transform: translateY(-200%); }
+  .skip-link:focus { transform: translateY(0); }
+</style>

@@ -2,20 +2,12 @@
 import BaseLayout from './BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-
-interface Props {
-	title?: string;
-	description?: string;
-	ogImage?: string;
-}
-
-const { title, description, ogImage } = Astro.props;
+import type { Locale } from '../lib/i18n';
+interface Props { title?: string; description?: string; ogImage?: string; locale?: Locale; noindex?: boolean; }
+const { locale = 'en', ...props } = Astro.props;
 ---
-
-<BaseLayout title={title} description={description} ogImage={ogImage}>
-	<Nav />
-	<main id="main-content" class="mx-auto max-w-2xl px-6 py-16">
-		<slot />
-	</main>
-	<Footer />
+<BaseLayout {...props} locale={locale}>
+  <Nav locale={locale} />
+  <main id="main-content" tabindex="-1" class="mx-auto max-w-2xl px-6 py-12 sm:py-16"><slot /></main>
+  <Footer locale={locale} />
 </BaseLayout>

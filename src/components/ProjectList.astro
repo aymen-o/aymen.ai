@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCopy, type Locale } from '../lib/i18n';
+interface Props { projects: CollectionEntry<'projects'>[]; locale: Locale; detailed?: boolean; }
+const { projects, locale, detailed = false } = Astro.props;
+const copy = getCopy(locale);
+const Heading = detailed ? 'h2' : 'h3';
+const colors: Record<string, string> = { active: '#6ba57b', shipped: '#929292', building: '#b48b58', employed: '#7995b3', exited: '#a296b8', running: '#7995b3', sunset: '#929292' };
+---
+<div>
+  {projects.map(project => {
+    const Tag = project.data.url ? 'a' : 'div';
+    return <Tag href={project.data.url} target={project.data.url ? '_blank' : undefined} rel={project.data.url ? 'noopener noreferrer' : undefined} class:list={['project-row -mx-3 block rounded-lg px-3 py-4', project.data.url && 'hover-row transition-colors hover:bg-bg-secondary']}>
+      <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+        <Heading class="font-mono text-sm font-semibold"><bdi>{project.data.title}</bdi>{project.data.url && <span aria-hidden="true" class="ms-2 text-text-secondary">↗</span>}</Heading>
+        <span class="inline-flex items-center gap-1.5 font-mono text-xs text-text-secondary"><span aria-hidden="true" class="inline-block h-1.5 w-1.5 rounded-full" style={`background-color:${colors[project.data.status]}`}></span>{copy.status[project.data.status]}</span>
+      </div>
+      <p class="mt-1.5 text-sm leading-relaxed text-text-secondary">{detailed ? (project.body?.trim() || project.data.description) : project.data.description}</p>
+      {detailed && <ul class="mt-3 flex flex-wrap gap-2" aria-label={copy.about.skillsTitle}>{project.data.tags.map(tag => <li class="rounded-full border border-border px-2 py-1 font-mono text-xs text-text-secondary"><bdi>{tag}</bdi></li>)}</ul>}
+    </Tag>;
+  })}
+</div>

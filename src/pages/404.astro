@@ -1,13 +1,12 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
+import { getCopy, locales, localeNames, localizedPath } from '../lib/i18n';
+const copy = getCopy('en');
 ---
-
-<PageLayout title="404" description="Page not found.">
-	<div class="flex min-h-[50vh] flex-col items-center justify-center text-center">
-		<h1 class="font-mono text-6xl font-bold">404</h1>
-		<p class="mt-4 text-text-secondary">This page doesn't exist.</p>
-		<a href="/" class="group mt-6 inline-flex items-center gap-1 font-mono text-sm text-text-secondary transition-colors duration-150 hover:text-text">
-			<span class="transition-transform duration-200 group-hover:translate-x-1">→</span> back home
-		</a>
-	</div>
+<PageLayout title="404" description={copy.notFound.description} noindex>
+  <div class="flex min-h-[45vh] flex-col items-start justify-center">
+    <h1 class="font-mono text-5xl font-bold">404</h1>
+    <p class="mt-5 text-text-secondary">{copy.notFound.description}</p>
+    <div class="mt-6 flex flex-wrap gap-4">{locales.map(locale => <a href={localizedPath(locale)} lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} class="inline-flex min-h-11 items-center font-mono text-sm underline underline-offset-4">{getCopy(locale).common.backHome} <span class="sr-only">({localeNames[locale]})</span></a>)}</div>
+  </div>
 </PageLayout>

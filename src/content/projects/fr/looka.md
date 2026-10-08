@@ -4,7 +4,7 @@ description: "Services, pipelines de données et interfaces des outils de design
 locale: fr
 translationKey: looka
 url: "https://looka.com/"
-status: shipped
+status: past
 tags: ["TypeScript", "React", "Node.js", "Python"]
 order: 3
 ---

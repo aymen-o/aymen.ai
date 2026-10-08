@@ -4,7 +4,7 @@ description: "Besoins d’inspection → sondes compatibles → demande de soumi
 locale: fr
 translationKey: eddyfi-tools
 url: "https://eddyfi.com/fr/outils"
-status: shipped
+status: active
 tags: ["CND", "Configuration", "Soumissions"]
 order: 1
 ---

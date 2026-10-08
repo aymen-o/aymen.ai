@@ -10,6 +10,7 @@ export interface BlogPost {
 export type ProjectStatus =
 	| "active"
 	| "shipped"
+	| "past"
 	| "sunset"
 	| "building"
 	| "employed"

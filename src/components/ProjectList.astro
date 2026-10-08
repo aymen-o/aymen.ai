@@ -7,11 +7,14 @@ const { projects, locale, detailed = false } = Astro.props;
 const copy = getCopy(locale);
 const Heading = detailed ? 'h2' : 'h3';
 const descriptions = { en: 'A closer look', fr: 'En détail', ar: 'نظرة أقرب' };
+const earlyLook = { en: 'Request an early look', fr: 'Demander un aperçu', ar: 'اطلب نظرة مبكرة' };
 const icons: Record<string, string> = {
   'eddyfi-tools': 'M4 17V7m4 12V5m4 16V3m4 16V5m4 12V7',
   'inworld-ai': 'M9 3a5 5 0 0 0-5 5v1a4 4 0 0 0 0 7 4 4 0 0 0 5 5V3Zm6 0a5 5 0 0 1 5 5v1a4 4 0 0 1 0 7 4 4 0 0 1-5 5V3ZM4 9h3m-3 7h3m10-7h3m-3 7h3',
   'looka': 'm12 3 9 9-9 9-9-9 9-9Zm0 5 4 4-4 4-4-4 4-4Z',
   'owood': 'M8 3h8l1 5a7 7 0 0 1 0 8l-1 5H8l-1-5a7 7 0 0 1 0-8l1-5Zm4 6v3l2 2',
+  'bloc-solutions': 'M3 21V7l9-4v18M12 10l9-3v14M2 21h20M6 9h2m-2 4h2m-2 4h2m8-5h2m-2 4h2',
+  'workflow-tools': 'M12 3v4m0 10v4M3 12h4m10 0h4M5.6 5.6l2.8 2.8m7.2 7.2 2.8 2.8M5.6 18.4l2.8-2.8m7.2-7.2 2.8-2.8M12 8l4 4-4 4-4-4 4-4Z',
 };
 const rendered = await Promise.all(projects.map(async project => ({ project, ...(await render(project)) })));
 ---
@@ -21,7 +24,7 @@ const rendered = await Promise.all(projects.map(async project => ({ project, ...
       <span class="work-icon" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d={icons[project.data.translationKey] || icons.looka} /></svg></span>
       <div class="work-title">
         <Heading>{project.data.url ? <a href={project.data.url} target="_blank" rel="noopener noreferrer"><bdi>{project.data.title}</bdi><span class="external-arrow" aria-hidden="true">↗</span></a> : <bdi>{project.data.title}</bdi>}</Heading>
-        <span class="project-status"><span aria-hidden="true" class:list={['status-dot', project.data.status === 'exited' && 'exited']}></span>{copy.status[project.data.status]}</span>
+        <span class="project-status"><span aria-hidden="true" class:list={['status-dot', project.data.status]}></span>{copy.status[project.data.status]}</span>
       </div>
     </div>
     <div class="work-content">
@@ -29,6 +32,7 @@ const rendered = await Promise.all(projects.map(async project => ({ project, ...
       {project.data.translationKey === 'eddyfi-tools' && <NdtFlow locale={locale} />}
       {detailed ? <div class="work-detail"><Content /></div> : <details class="work-details"><summary>{descriptions[locale]}<span aria-hidden="true">+</span></summary><div class="work-detail"><Content /></div></details>}
       {detailed && <ul class="work-tags" aria-label={copy.about.skillsTitle}>{project.data.tags.map(tag => <li><bdi>{tag}</bdi></li>)}</ul>}
+      {project.data.translationKey === 'workflow-tools' && <a class="early-look" href="mailto:hello@aymen.ca?subject=Stealth%20project%20%E2%80%94%20early%20look">{earlyLook[locale]}<span aria-hidden="true">↗</span></a>}
     </div>
   </article>)}
 </div>
@@ -43,6 +47,10 @@ const rendered = await Promise.all(projects.map(async project => ({ project, ...
   .project-status { display: inline-flex; align-items: center; gap: .4rem; color: var(--text-secondary); font-family: var(--font-mono); font-size: .65rem; white-space: nowrap; }
   .status-dot { width: 4px; height: 4px; border-radius: 50%; background: #739e80; }
   .status-dot.exited { background: #9c91ae; }
+  .status-dot.past, .status-dot.sunset { background: var(--text-secondary); }
+  .status-dot.building { background: #b08a52; }
+  .early-look { display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; font-size: .75rem; color: var(--text); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: .25em; }
+  .early-look:hover { text-decoration-color: currentColor; }
   .work-content { margin-inline-start: 52px; }
   .work-description { color: var(--text-secondary); font-size: .88rem; line-height: 1.8; max-width: 36rem; margin-top: .4rem; text-wrap: pretty; }
   .work-details { margin-top: .7rem; }

@@ -13,7 +13,7 @@ const projects = defineCollection({
 		translationKey: z.string(),
 		url: z.url().optional(),
 		repo: z.url().optional(),
-		status: z.enum(['active', 'shipped', 'sunset', 'building', 'employed', 'running', 'exited']),
+		status: z.enum(['active', 'shipped', 'past', 'sunset', 'building', 'employed', 'running', 'exited']),
 		tags: z.array(z.string()).default([]),
 		order: z.number(),
 		draft: z.boolean().default(false),

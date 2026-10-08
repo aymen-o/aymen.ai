@@ -4,7 +4,7 @@ description: "متطلبات الفحص، ثم المجسّات المتوافق
 locale: ar
 translationKey: eddyfi-tools
 url: "https://eddyfi.com/en/tools"
-status: shipped
+status: active
 tags: ["الفحص غير الإتلافي", "التهيئة", "عروض الأسعار"]
 order: 1
 ---

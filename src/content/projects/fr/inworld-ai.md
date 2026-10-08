@@ -4,7 +4,7 @@ description: "Développement Kotlin pour les personnages IA d’Inworld AI."
 locale: fr
 translationKey: inworld-ai
 url: "https://inworld.ai/"
-status: shipped
+status: past
 tags: ["Kotlin", "SQL", "NoSQL"]
 order: 2
 ---

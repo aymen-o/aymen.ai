@@ -1,12 +1,11 @@
 ---
-title: "Outils pour les entreprises de services"
-description: "Projets indépendants d’automatisation et de soumission instantanée."
+title: "Stealth"
+description: "Une plateforme d’intelligence pour des problèmes concrets. Agents IA, AutoML et systèmes distribués."
 locale: fr
 translationKey: workflow-tools
 status: building
-tags: ["Automatisation", "IA"]
-draft: true
-order: 2
+tags: ["Agents IA", "AutoML", "Systèmes distribués"]
+order: 6
 ---
 
-Des outils pratiques pour les entreprises de services à Québec, Montréal et Toronto. L’objectif est d’automatiser les processus et de faciliter les réponses aux demandes de soumission. Projets en cours de développement.
+Je développe une plateforme d’intelligence autour des agents IA, de l’apprentissage automatique automatisé et des systèmes distribués. L’objectif : relier l’intelligence à des problèmes concrets et aux actions nécessaires pour les résoudre. Le projet est en développement; les détails du produit restent confidentiels pour le moment.

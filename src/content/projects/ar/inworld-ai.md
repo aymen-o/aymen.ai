@@ -4,7 +4,7 @@ description: "تطوير أنظمة الشخصيات الذكية باستخدا
 locale: ar
 translationKey: inworld-ai
 url: "https://inworld.ai/"
-status: shipped
+status: past
 tags: ["Kotlin", "SQL", "NoSQL"]
 order: 2
 ---

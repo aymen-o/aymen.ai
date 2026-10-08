@@ -4,7 +4,7 @@ description: "Kotlin work on AI character systems at Inworld AI."
 locale: en
 translationKey: inworld-ai
 url: "https://inworld.ai/"
-status: shipped
+status: past
 tags: ["Kotlin", "SQL", "NoSQL"]
 order: 2
 ---

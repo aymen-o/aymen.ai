@@ -2,6 +2,8 @@
 import PageLayout from '../../layouts/PageLayout.astro';
 import ProjectList from '../ProjectList.astro';
 import SocialLinks from '../SocialLinks.astro';
+import CompanyText from '../CompanyText.astro';
+import Icon from '../Icon.astro';
 import { getCollection } from 'astro:content';
 import { getCopy, localizedPath, type Locale } from '../../lib/i18n';
 import { AUTHOR } from '../../lib/constants';
@@ -14,13 +16,12 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft && d
   <section class="hero" aria-labelledby="name">
     <span class="arabic-name" aria-hidden="true" lang="ar" dir="rtl">أيمن</span>
     <div class="hero-content" data-stagger="85">
-      <p class="role">{copy.home.role}</p>
       <h1 id="name">{locale === 'ar' ? AUTHOR.nameArabic : AUTHOR.name}<span class="name-period" aria-hidden="true">.</span></h1>
       {locale === 'ar' && <p class="latin-name"><bdi dir="ltr">{AUTHOR.name}</bdi></p>}
-      <p class="intro">{copy.home.intro}</p>
+      <p class="intro"><CompanyText text={copy.home.intro} locale={locale} /></p>
       <div class="hero-bottom">
         <SocialLinks locale={locale} />
-        <span class="location"><span class="location-dot" aria-hidden="true"></span>{copy.home.location.replace(/\.$/, '')}</span>
+        <span class="location"><Icon name="map-pin" size={15} />{copy.home.location.replace(/\.$/, '')}</span>
       </div>
     </div>
   </section>
@@ -35,14 +36,12 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft && d
 <style>
   .hero { position: relative; padding: 3rem 0 4.5rem; overflow: clip; }
   .hero-content { position: relative; }
-  .role { font-family: var(--font-mono); font-size: .8rem; color: var(--text-secondary); margin-bottom: 1rem; }
   h1 { font-size: clamp(2.1rem, 5vw, 3.65rem); font-weight: 600; line-height: 1.12; letter-spacing: -.045em; }
   .name-period { color: var(--text-secondary); }
   .intro { max-width: 33rem; margin-top: 1.6rem; font-size: 1.05rem; line-height: 1.85; color: var(--text-secondary); text-wrap: pretty; }
   .latin-name { margin-top: .75rem; font-size: .85rem; color: var(--text-secondary); }
   .hero-bottom { display: flex; align-items: center; gap: 1.3rem; margin-top: 1.4rem; }
   .location { display: flex; align-items: center; gap: .45rem; padding-inline-start: 1.3rem; border-inline-start: 1px solid var(--border); color: var(--text-secondary); font-family: var(--font-mono); font-size: .7rem; }
-  .location-dot { height: 4px; width: 4px; border-radius: 50%; background: currentColor; }
   .arabic-name { position: absolute; inset-inline-end: -1rem; top: 1rem; font-size: clamp(9rem, 20vw, 14rem); font-weight: 700; line-height: 1.35; opacity: .035; pointer-events: none; user-select: none; transform: rotate(-8deg); }
   .section-intro { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1.1rem; border-bottom: 1px solid var(--border); }
   h2 { display: flex; align-items: center; gap: .65rem; font-size: .95rem; font-weight: 500; }
@@ -50,6 +49,6 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft && d
   .about-link { display: inline-flex; gap: .5rem; align-items: center; min-height: 44px; font-size: .75rem; color: var(--text-secondary); }
   .about-link:hover { color: var(--text); }
   @media (prefers-reduced-motion: no-preference) { .asterisk { transition: transform 600ms ease; } .section-intro:hover .asterisk { transform: rotate(90deg); } }
-  @media (max-width: 480px) { .hero { padding: 2rem 0 3rem; } .intro { font-size: .95rem; } .role { font-size: .7rem; } .arabic-name { inset-inline-end: 0; } .section-intro { align-items: baseline; flex-wrap: wrap; gap: 0; } }
+  @media (max-width: 480px) { .hero { padding: 2rem 0 3rem; } .intro { font-size: .95rem; } .arabic-name { inset-inline-end: 0; } .section-intro { align-items: baseline; flex-wrap: wrap; gap: 0; } }
   :global([lang="ar"]) h1 { letter-spacing: 0; line-height: 1.6; }
 </style>

@@ -4,7 +4,7 @@ description: "Inspection requirements → compatible probes → quote request. B
 locale: en
 translationKey: eddyfi-tools
 url: "https://eddyfi.com/en/tools"
-status: shipped
+status: active
 tags: ["NDT", "Configuration", "Quoting"]
 order: 1
 ---

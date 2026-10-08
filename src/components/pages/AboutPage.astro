@@ -2,30 +2,30 @@
 import PageLayout from '../../layouts/PageLayout.astro';
 import { getCopy, type Locale } from '../../lib/i18n';
 import { SITE } from '../../lib/constants';
+import CompanyText from '../CompanyText.astro';
 interface Props { locale?: Locale; }
 const { locale = 'en' } = Astro.props;
 const copy = getCopy(locale);
-const skills = ['TypeScript', 'Vue.js', 'React', 'Node.js', 'C# / ASP.NET', 'Python', 'PHP', 'SQL', 'REST APIs', 'Docker'];
 ---
 <PageLayout title={copy.about.title} description={copy.about.description} locale={locale}>
   <article>
     <div data-stagger><h1 class="text-3xl font-semibold tracking-tight">{copy.about.title}</h1>
-    <div class="mt-6 space-y-4 leading-[1.8] text-text-secondary">{copy.about.intro.map(paragraph => <p>{paragraph}</p>)}</div></div>
+    <div class="mt-6 space-y-4 leading-[1.8] text-text-secondary">{copy.about.intro.map(paragraph => <p><CompanyText text={paragraph} locale={locale} /></p>)}</div></div>
     <section class="mt-12 border-t border-border pt-6" data-reveal>
       <h2 class="section-heading">{copy.about.workTitle}</h2>
-      <div class="mt-4 space-y-4 leading-[1.8] text-text-secondary">{copy.about.work.map(paragraph => <p>{paragraph}</p>)}</div>
+      <div class="mt-4 space-y-4 leading-[1.8] text-text-secondary">{copy.about.work.map(paragraph => <p><CompanyText text={paragraph} locale={locale} /></p>)}</div>
     </section>
     <section class="mt-12 border-t border-border pt-6" data-reveal>
       <h2 class="section-heading">{copy.about.experienceTitle}</h2>
       <ol class="timeline mt-6">{copy.about.experience.map(item => <li class="timeline-item" data-reveal>
-        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"><h3 class="font-mono text-sm font-semibold"><bdi>{item.company}</bdi></h3><p class="font-mono text-xs text-text-secondary">{item.period}</p></div>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"><h3 class="font-mono text-sm font-semibold"><CompanyText text={item.company} locale={locale} /></h3><p class="font-mono text-xs text-text-secondary">{item.period}</p></div>
         <p class="mt-1 text-sm">{item.role}</p>
         <p class="mt-2 text-sm leading-relaxed text-text-secondary">{item.description}</p>
       </li>)}</ol>
     </section>
     <section class="mt-12 border-t border-border pt-6" data-reveal>
       <h2 class="section-heading">{copy.about.skillsTitle}</h2>
-      <ul class="skills mt-4 flex flex-wrap gap-x-5 gap-y-3">{skills.map(skill => <li class="font-mono text-xs text-text-secondary"><bdi>{skill}</bdi></li>)}</ul>
+      <div class="toolkit mt-5">{copy.about.toolGroups.map(group => <div class="tool-group"><h3>{group.title}</h3><ul>{group.items.map(skill => <li><bdi>{skill}</bdi></li>)}</ul></div>)}</div>
     </section>
     <section class="mt-12 border-t border-border pt-6" data-reveal>
       <h2 class="section-heading">{copy.about.educationTitle}</h2>
@@ -36,6 +36,11 @@ const skills = ['TypeScript', 'Vue.js', 'React', 'Node.js', 'C# / ASP.NET', 'Pyt
 </PageLayout>
 <style>
   .section-heading { font-size: .95rem; font-weight: 500; }
+  .toolkit { display: grid; gap: 1.35rem; }
+  .tool-group { display: grid; grid-template-columns: 9.5rem 1fr; gap: .65rem 1.5rem; }
+  .tool-group h3 { color: var(--text); font-size: .75rem; font-weight: 500; line-height: 1.8; }
+  .tool-group ul { display: flex; flex-wrap: wrap; align-items: baseline; gap: .55rem 1.1rem; font-family: var(--font-mono); font-size: .72rem; line-height: 1.8; color: var(--text-secondary); }
+  @media (max-width: 520px) { .tool-group { grid-template-columns: 1fr; gap: .4rem; } }
   .timeline-item { position: relative; border-inline-start: 1px solid var(--border); padding-inline-start: 1.5rem; padding-bottom: 2rem; }
   .timeline-item:last-child { padding-bottom: 0; }
   .timeline-item::before { content: ''; position: absolute; inset-inline-start: -3.5px; top: .45rem; width: 6px; height: 6px; border-radius: 50%; background: var(--bg); border: 1px solid var(--text-secondary); }

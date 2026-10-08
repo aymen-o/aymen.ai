@@ -20,6 +20,7 @@ export interface SiteCopy {
 		workTitle: string;
 		work: string[];
 		skillsTitle: string;
+		toolGroups: { title: string; items: string[] }[];
 		experienceTitle: string;
 		experience: { company: string; role: string; period: string; description: string }[];
 		educationTitle: string;
@@ -42,8 +43,8 @@ const copy: Record<Locale, SiteCopy> = {
 		common: { skipToContent: 'Skip to content', contact: 'Get in touch', source: 'Source', backHome: 'Back home', allPosts: 'All notes', allProjects: 'All projects', readMore: 'Read more', updated: 'Updated', share: 'Share', copyLink: 'Copy link', copied: 'Link copied', copyFailed: 'Could not copy. Copy the address from your browser.' },
 		home: {
 			description: 'Aymen El Akbari — software developer in Canada. AI character systems at Inworld, design tools at Looka, and NDT configuration at Eddyfi / ESAB.',
-			role: 'Software developer · AI & product',
-			intro: 'Character memory at Inworld. AI-powered design at Looka. Now, NDT configuration at Eddyfi / ESAB.',
+			role: 'AI & software',
+			intro: 'Character memory at Inworld. AI-powered design at Looka. SaaS at Bloc Solutions. Now, NDT configuration at Eddyfi / ESAB.',
 			employerPrefix: 'Currently at',
 			location: 'Canada.',
 			aboutLink: 'More about me',
@@ -59,14 +60,15 @@ const copy: Record<Locale, SiteCopy> = {
 				'At Eddyfi / ESAB, I build software for non-destructive testing (NDT). The probe tools turn inspection requirements into compatible product configurations and quote requests: tube material and dimensions on one side, probe specifications and part numbers on the other.',
 				'I’ve also had to sell and operate what I built. I founded owood at 18, handled the product and its Shopify store, and took it from a Kickstarter launch to acquisition. Later, I ran a five-person web agency.',
 			],
-			skillsTitle: 'Tools I work with',
+			skillsTitle: 'Toolkit & current focus',
+			toolGroups: [{"title": "AI development", "items": ["Claude", "Codex"]}, {"title": "Current focus", "items": ["AI agents", "AutoML", "Distributed systems"]}, {"title": "Product & services", "items": ["TypeScript", "React", "Vue.js", "Node.js", "Python", "Kotlin", "C# / ASP.NET", "PHP / Laravel"]}, {"title": "Data & delivery", "items": ["PostgreSQL", "SQL / NoSQL", "REST APIs", "Docker"]}],
 			experienceTitle: 'Experience',
 			experience: [
 				{ company: 'ESAB', role: 'Software Developer', period: 'Jun 2026 – present', description: 'Web platforms across Eddyfi, Zetec, Sisgeo, Sensor Networks, and Huggenberger during the ESAB–Eddyfi integration.' },
 				{ company: 'Eddyfi Technologies', role: 'Software Developer', period: 'Sep 2023 – present', description: 'Built the Tubing Probe Creator and PAUT Probe Finder: configuration and quoting tools for non-destructive testing. Also work on internal platforms and API integrations.' },
 				{ company: 'Looka', role: 'Software Developer', period: 'Oct 2021 – Sep 2023', description: 'Built backend services, data pipelines, and product interfaces for AI-generated logos and brand identities.' },
 				{ company: 'Inworld AI', role: 'Kotlin Developer · consultant', period: 'Mar – Aug 2022', description: 'Worked on AI character behavior and memory systems with Kotlin and SQL/NoSQL databases.' },
-				{ company: 'Bloc Solutions', role: 'Analyst → Frontend Developer', period: 'Oct 2019 – Dec 2021', description: 'Moved from analytics into frontend development in October 2020. Built product interfaces with Vue, PHP, and Laravel.' },
+				{ company: 'Bloc Solutions', role: 'Analyst → Frontend Developer', period: 'Oct 2019 – Dec 2021', description: 'Moved from analytics into frontend development in October 2020. Worked on a rental-management SaaS with Vue.js, Laravel, PostgreSQL, and Docker.' },
 				{ company: 'Quota Agence Web', role: 'Founder & Web Developer', period: 'Jun 2020 – Nov 2021', description: 'Ran a five-person agency delivering more than 35 web projects. Worked on development, scoping, sales, and delivery.' },
 				{ company: 'owood', role: 'Founder', period: 'Mar 2018 – Feb 2020', description: 'Founded a wooden watch brand at 18. Built the product and Shopify store, ran the Kickstarter launch, and handled marketing and fulfillment. Acquired in 2020.' },
 			],
@@ -80,10 +82,10 @@ const copy: Record<Locale, SiteCopy> = {
 			outsideTitle: 'Outside of work',
 			outside: [],
 		},
-		projects: { title: 'Work', description: 'Inspection probes, AI characters, brand-generation tools, and a watch brand.' },
+		projects: { title: 'Work', description: 'NDT configuration, AI character systems, design tools, rental-management SaaS, and a new intelligence platform in development.' },
 		blog: { title: 'Notes', description: 'Short notes on web development and the decisions behind this site.', back: 'All notes', empty: 'No notes published yet.' },
 		notFound: { title: 'Page not found', description: 'This page may have moved, or the address may be incorrect.' },
-		status: { active: 'active', shipped: 'built', sunset: 'archived', building: 'in progress', employed: 'at work', running: 'running', exited: 'acquired' },
+		status: { active: 'active', shipped: 'shipped', past: 'past work', sunset: 'closed', building: 'in development', employed: 'at work', running: 'running', exited: 'acquired' },
 	},
 	fr: {
 		nav: { home: 'accueil', about: 'à propos', blog: 'notes', projects: 'projets', label: 'Navigation principale', openMenu: 'Ouvrir le menu', closeMenu: 'Fermer le menu', language: 'Langue' },
@@ -91,8 +93,8 @@ const copy: Record<Locale, SiteCopy> = {
 		common: { skipToContent: 'Aller au contenu', contact: 'Me joindre', source: 'Code source', backHome: "Retour à l’accueil", allPosts: 'Toutes les notes', allProjects: 'Tous les projets', readMore: 'Lire la suite', updated: 'Mise à jour', share: 'Partager', copyLink: 'Copier le lien', copied: 'Lien copié', copyFailed: "Copie impossible. Copiez l’adresse dans votre navigateur." },
 		home: {
 			description: 'Aymen El Akbari, développeur logiciel au Canada. Personnages IA chez Inworld, outils de design chez Looka et configuration de sondes CND chez Eddyfi / ESAB.',
-			role: 'Développeur logiciel · IA & produit',
-			intro: 'La mémoire des personnages chez Inworld. Le design par IA chez Looka. Aujourd’hui, la configuration de sondes CND chez Eddyfi / ESAB.',
+			role: 'IA et logiciel',
+			intro: 'La mémoire des personnages chez Inworld. Le design par IA chez Looka. Le SaaS chez Bloc Solutions. Aujourd’hui, la configuration de sondes CND chez Eddyfi / ESAB.',
 			employerPrefix: 'Actuellement chez',
 			location: 'Canada.',
 			aboutLink: 'En savoir plus sur moi',
@@ -108,14 +110,15 @@ const copy: Record<Locale, SiteCopy> = {
 				'Chez Eddyfi / ESAB, je développe des logiciels de contrôle non destructif (CND). Les outils de sélection de sondes traduisent les besoins d’inspection en configurations compatibles et en demandes de soumission : d’un côté, le matériau et les dimensions d’un tube; de l’autre, les caractéristiques et les numéros de pièce des sondes.',
 				'J’ai aussi dû vendre et faire fonctionner ce que je créais. J’ai fondé owood à 18 ans, conçu le produit et sa boutique Shopify, puis mené la marque d’un lancement sur Kickstarter jusqu’à son acquisition. J’ai ensuite dirigé une agence Web de cinq personnes.',
 			],
-			skillsTitle: 'Mes outils de travail',
+			skillsTitle: 'Outils et pistes actuelles',
+			toolGroups: [{"title": "Développement avec l’IA", "items": ["Claude", "Codex"]}, {"title": "Axes actuels", "items": ["Agents IA", "AutoML", "Systèmes distribués"]}, {"title": "Produit et services", "items": ["TypeScript", "React", "Vue.js", "Node.js", "Python", "Kotlin", "C# / ASP.NET", "PHP / Laravel"]}, {"title": "Données et déploiement", "items": ["PostgreSQL", "SQL / NoSQL", "REST APIs", "Docker"]}],
 			experienceTitle: 'Expérience',
 			experience: [
 				{ company: 'ESAB', role: 'Développeur logiciel', period: 'Juin 2026 – aujourd’hui', description: 'Plateformes Web d’Eddyfi, Zetec, Sisgeo, Sensor Networks et Huggenberger dans le cadre de l’intégration d’ESAB et d’Eddyfi.' },
 				{ company: 'Eddyfi Technologies', role: 'Développeur logiciel', period: 'Sept. 2023 – aujourd’hui', description: 'Création de Tubing Probe Creator et de PAUT Probe Finder : des outils de configuration et de soumission pour le contrôle non destructif. Travail également sur les plateformes internes et les intégrations d’API.' },
 				{ company: 'Looka', role: 'Développeur logiciel', period: 'Oct. 2021 – sept. 2023', description: 'Développement de services backend, de pipelines de données et d’interfaces pour la création de logos et d’identités de marque par IA.' },
 				{ company: 'Inworld AI', role: 'Développeur Kotlin · consultant', period: 'Mars – août 2022', description: 'Travail sur le comportement et la mémoire de personnages IA avec Kotlin et des bases de données SQL/NoSQL.' },
-				{ company: 'Bloc Solutions', role: 'Analyste → développeur frontend', period: 'Oct. 2019 – déc. 2021', description: 'Passage de l’analyse de données au développement frontend en octobre 2020. Création d’interfaces avec Vue, PHP et Laravel.' },
+				{ company: 'Bloc Solutions', role: 'Analyste → développeur frontend', period: 'Oct. 2019 – déc. 2021', description: 'Passage de l’analyse de données au développement frontend en octobre 2020. Travail sur un SaaS de gestion locative avec Vue.js, Laravel, PostgreSQL et Docker.' },
 				{ company: 'Quota Agence Web', role: 'Fondateur et développeur Web', period: 'Juin 2020 – nov. 2021', description: 'Direction d’une agence de cinq personnes et livraison de plus de 35 projets Web. Développement, définition des mandats, ventes et livraison.' },
 				{ company: 'owood', role: 'Fondateur', period: 'Mars 2018 – févr. 2020', description: 'Création d’une marque de montres en bois à 18 ans. Produit, boutique Shopify, lancement sur Kickstarter, marketing et commandes. Entreprise acquise en 2020.' },
 			],
@@ -129,10 +132,10 @@ const copy: Record<Locale, SiteCopy> = {
 			outsideTitle: 'En dehors du travail',
 			outside: [],
 		},
-		projects: { title: 'Projets', description: 'Des sondes d’inspection, des personnages IA, des outils de création de marques et une marque de montres.' },
+		projects: { title: 'Projets', description: 'Configuration de sondes CND, personnages IA, outils de design, SaaS de gestion locative et une plateforme d’intelligence en développement.' },
 		blog: { title: 'Notes', description: 'Quelques notes sur le développement Web et les choix derrière ce site.', back: 'Toutes les notes', empty: 'Aucune note publiée pour le moment.' },
 		notFound: { title: 'Page introuvable', description: 'Cette page a peut-être changé d’adresse, ou le lien est incorrect.' },
-		status: { active: 'actif', shipped: 'réalisé', sunset: 'archivé', building: 'en cours', employed: 'en entreprise', running: 'en activité', exited: 'acquis' },
+		status: { active: 'actif', shipped: 'livré', past: 'travail antérieur', sunset: 'fermé', building: 'en développement', employed: 'en entreprise', running: 'en activité', exited: 'acquis' },
 	},
 	ar: {
 		nav: { home: 'الرئيسية', about: 'نبذة عني', blog: 'مقالات', projects: 'المشاريع', label: 'التنقل الرئيسي', openMenu: 'فتح القائمة', closeMenu: 'إغلاق القائمة', language: 'اللغة' },
@@ -140,8 +143,8 @@ const copy: Record<Locale, SiteCopy> = {
 		common: { skipToContent: 'الانتقال إلى المحتوى', contact: 'تواصل معي', source: 'الشيفرة المصدرية', backHome: 'العودة إلى الرئيسية', allPosts: 'جميع المقالات', allProjects: 'جميع المشاريع', readMore: 'قراءة المزيد', updated: 'آخر تحديث', share: 'مشاركة', copyLink: 'نسخ الرابط', copied: 'تم نسخ الرابط', copyFailed: 'تعذّر النسخ. يمكنك نسخ العنوان من المتصفح.' },
 		home: {
 			description: 'أيمن الأكبري، مطوّر برمجيات في كندا. شخصيات ذكية لدى Inworld، وأدوات تصميم لدى Looka، وأدوات تهيئة مجسّات الفحص لدى Eddyfi / ESAB.',
-			role: 'مطوّر برمجيات · ذكاء اصطناعي ومنتجات',
-			intro: 'ذاكرة الشخصيات لدى Inworld. والتصميم بالذكاء الاصطناعي لدى Looka. واليوم، تهيئة مجسّات الفحص غير الإتلافي لدى Eddyfi / ESAB.',
+			role: 'ذكاء اصطناعي وبرمجيات',
+			intro: 'ذاكرة الشخصيات لدى Inworld. والتصميم بالذكاء الاصطناعي لدى Looka. ومنصات SaaS لدى Bloc Solutions. واليوم، تهيئة مجسّات الفحص غير الإتلافي لدى Eddyfi / ESAB.',
 			employerPrefix: 'أعمل حاليًا لدى',
 			location: 'كندا.',
 			aboutLink: 'المزيد عني',
@@ -157,14 +160,15 @@ const copy: Record<Locale, SiteCopy> = {
 				'أطوّر لدى Eddyfi / ESAB برمجيات للفحص غير الإتلافي. تحوّل أدوات اختيار المجسّات متطلبات الفحص إلى مواصفات منتجات متوافقة وطلبات عروض أسعار: مادة الأنبوب وأبعاده من جهة، ومواصفات المجسّات وأرقام القطع من جهة أخرى.',
 				'سبق لي أيضًا أن تولّيت بيع ما أبنيه وإدارته. أسست owood في سن الثامنة عشرة، وطوّرت المنتج ومتجره على Shopify، من الإطلاق عبر Kickstarter إلى الاستحواذ على العلامة. ثم أدرت وكالة لتطوير الويب من خمسة أشخاص.',
 			],
-			skillsTitle: 'الأدوات التي أستخدمها',
+			skillsTitle: 'أدواتي واهتماماتي الحالية',
+			toolGroups: [{"title": "التطوير بمساعدة الذكاء الاصطناعي", "items": ["Claude", "Codex"]}, {"title": "تركيزي الحالي", "items": ["وكلاء الذكاء الاصطناعي", "AutoML", "الأنظمة الموزّعة"]}, {"title": "المنتجات والخدمات", "items": ["TypeScript", "React", "Vue.js", "Node.js", "Python", "Kotlin", "C# / ASP.NET", "PHP / Laravel"]}, {"title": "البيانات والنشر", "items": ["PostgreSQL", "SQL / NoSQL", "REST APIs", "Docker"]}],
 			experienceTitle: 'الخبرة المهنية',
 			experience: [
 				{ company: 'ESAB', role: 'مطوّر برمجيات', period: 'يونيو 2026 – حتى الآن', description: 'العمل على منصات الويب لدى Eddyfi وZetec وSisgeo وSensor Networks وHuggenberger ضمن عملية التكامل بين ESAB وEddyfi.' },
 				{ company: 'Eddyfi Technologies', role: 'مطوّر برمجيات', period: 'سبتمبر 2023 – حتى الآن', description: 'تطوير أداتي Tubing Probe Creator وPAUT Probe Finder لاختيار مجسّات الفحص غير الإتلافي وتحديد مواصفاتها وطلب عروض أسعار، إلى جانب المنصات الداخلية وتكامل واجهات API.' },
 				{ company: 'Looka', role: 'مطوّر برمجيات', period: 'أكتوبر 2021 – سبتمبر 2023', description: 'تطوير خدمات خلفية ومسارات لمعالجة البيانات وواجهات لإنشاء الشعارات والهويات البصرية بالذكاء الاصطناعي.' },
 				{ company: 'Inworld AI', role: 'مطوّر Kotlin · مستشار', period: 'مارس – أغسطس 2022', description: 'العمل على سلوك الشخصيات الذكية وذاكرتها باستخدام Kotlin وقواعد بيانات SQL وNoSQL.' },
-				{ company: 'Bloc Solutions', role: 'محلل ثم مطوّر واجهات أمامية', period: 'أكتوبر 2019 – ديسمبر 2021', description: 'انتقلت من تحليل البيانات إلى تطوير الواجهات الأمامية في أكتوبر 2020. طوّرت واجهات باستخدام Vue وPHP وLaravel.' },
+				{ company: 'Bloc Solutions', role: 'محلل ثم مطوّر واجهات أمامية', period: 'أكتوبر 2019 – ديسمبر 2021', description: 'انتقلت من تحليل البيانات إلى تطوير الواجهات الأمامية في أكتوبر 2020. عملت على منصة SaaS لإدارة العقارات المؤجّرة باستخدام Vue.js وLaravel وPostgreSQL وDocker.' },
 				{ company: 'Quota Agence Web', role: 'مؤسس ومطوّر ويب', period: 'يونيو 2020 – نوفمبر 2021', description: 'أدرت وكالة من خمسة أشخاص أنجزت أكثر من 35 مشروع ويب. تولّيت التطوير وتحديد نطاق المشاريع والمبيعات والتسليم.' },
 				{ company: 'owood', role: 'مؤسس', period: 'مارس 2018 – فبراير 2020', description: 'أسست علامة للساعات الخشبية في سن الثامنة عشرة. تولّيت المنتج ومتجر Shopify والإطلاق عبر Kickstarter والتسويق وتنفيذ الطلبات. استُحوذ على العلامة في عام 2020.' },
 			],
@@ -178,10 +182,10 @@ const copy: Record<Locale, SiteCopy> = {
 			outsideTitle: 'خارج العمل',
 			outside: [],
 		},
-		projects: { title: 'أعمالي', description: 'مجسّات فحص، وشخصيات ذكية، وأدوات لإنشاء الهويات البصرية، وعلامة للساعات.' },
+		projects: { title: 'أعمالي', description: 'تهيئة مجسّات الفحص، وشخصيات ذكية، وأدوات تصميم، ومنصة لإدارة العقارات، ومنصة ذكاء قيد التطوير.' },
 		blog: { title: 'مقالات', description: 'مقالات قصيرة عن تطوير الويب والخيارات التي يقوم عليها هذا الموقع.', back: 'جميع المقالات', empty: 'لا توجد مقالات منشورة بعد.' },
 		notFound: { title: 'الصفحة غير موجودة', description: 'ربما نُقلت هذه الصفحة، أو أن العنوان غير صحيح.' },
-		status: { active: 'نشط', shipped: 'مُنجز', sunset: 'مؤرشف', building: 'قيد التطوير', employed: 'ضمن عملي', running: 'قائم', exited: 'تم الاستحواذ عليه' },
+		status: { active: 'نشط', shipped: 'مُنجز', past: 'عمل سابق', sunset: 'متوقف', building: 'قيد التطوير', employed: 'ضمن عملي', running: 'قائم', exited: 'تم الاستحواذ عليه' },
 	},
 };
 

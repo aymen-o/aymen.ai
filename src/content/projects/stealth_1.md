@@ -1,12 +1,11 @@
 ---
-title: "Tools for service businesses"
-description: "Independent work on workflow automation and instant quoting."
+title: "Stealth"
+description: "An intelligence platform for real-world problems. Agents, AutoML, and distributed systems."
 locale: en
 translationKey: workflow-tools
 status: building
-tags: ["Automation", "AI"]
-draft: true
-order: 2
+tags: ["AI agents", "AutoML", "Distributed systems"]
+order: 6
 ---
 
-Practical tools for service businesses in Québec, Montréal, and Toronto. The focus is on automating workflows and helping businesses respond to quote requests. Work in progress.
+I’m building an intelligence platform around AI agents, automated machine learning, and distributed systems. The aim is to connect intelligence to real-world problems and the actions needed to solve them. Still in development; the product details stay under wraps for now.

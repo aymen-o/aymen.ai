@@ -1,0 +1,20 @@
+---
+import { type Locale } from '../lib/i18n';
+interface Props { text: string; locale?: Locale; }
+const { text, locale = 'en' } = Astro.props;
+const companies: Record<string, string> = {
+  'Inworld AI': 'https://inworld.ai/',
+  Inworld: 'https://inworld.ai/',
+  Looka: 'https://looka.com/',
+  'Eddyfi Technologies': 'https://eddyfi.com/',
+  Eddyfi: 'https://eddyfi.com/',
+  ESAB: 'https://esab.com/',
+  'Bloc Solutions': `https://www.bloc.solutions/${locale === 'fr' ? 'fr' : 'en'}`,
+};
+const parts = text.split(/(Inworld AI|Inworld|Looka|Eddyfi Technologies|Eddyfi|ESAB|Bloc Solutions)/g);
+---
+{parts.map(part => companies[part] ? <a class="company-link" href={companies[part]} target="_blank" rel="noopener noreferrer"><bdi>{part}</bdi></a> : part)}
+<style>
+  .company-link { color: var(--text); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  .company-link:hover { text-decoration-color: currentColor; }
+</style>

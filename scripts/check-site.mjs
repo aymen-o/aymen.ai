@@ -75,6 +75,17 @@ for (const page of pages.values()) {
   }
 
   for (const node of page.nodes) {
+    for (const attribute of ['aria-labelledby', 'aria-describedby', 'aria-controls']) {
+      for (const id of attr(node, attribute).split(/\s+/).filter(Boolean)) {
+        check(page.nodes.some(target => attr(target, 'id') === id), `${page.route}: ${attribute} references a missing element: ${id}`);
+      }
+    }
+    if (node.tagName === 'button' || (['input', 'select', 'textarea'].includes(node.tagName) && attr(node, 'type') !== 'hidden')) {
+      const labelledBy = attr(node, 'aria-labelledby').split(/\s+/).filter(Boolean).map(id => accessibleText(page.nodes.find(target => attr(target, 'id') === id))).join(' ');
+      const label = page.nodes.filter(target => target.tagName === 'label' && attr(target, 'for') === attr(node, 'id') && attr(node, 'id')).map(accessibleText).join(' ');
+      const name = attr(node, 'aria-label') || labelledBy || label || (node.tagName === 'button' ? accessibleText(node) : '') || attr(node, 'title');
+      check(Boolean(name.trim()), `${page.route}: ${node.tagName} control has no accessible name`);
+    }
     if (node.tagName === 'script' && attr(node, 'type') === 'application/ld+json') {
       try {
         const data = JSON.parse(text(node));
@@ -122,10 +133,29 @@ for (const page of pages.values()) {
 }
 
 for (const locale of locales) {
-  for (const route of ['/', '/about/', '/projects/', '/blog/']) {
+  for (const route of ['/', '/about/', '/projects/']) {
     check(pages.has(localizedPath(locale, route)), `Missing ${locale} core route: ${route}`);
   }
 }
+for (const route of pages.keys()) {
+  check(!/^\/(?:fr\/|ar\/)?blog(?:\/|$)/.test(route), `Retired Notes route is still published: ${route}`);
+}
+for (const file of files) {
+  check(!file.startsWith('archive/'), `Private archive is published: ${file}`);
+}
+for (const file of ['og/ai-sovereignty-quebec.png', 'og/astro-for-portfolios-2026.png', 'og/building-aymen-ai.png']) {
+  check(!files.has(file), `Retired article image is still published: ${file}`);
+}
+const sitemapFiles = [...files].filter(file => /^sitemap-\d+\.xml$/.test(file));
+check(sitemapFiles.length > 0, 'No generated sitemap found.');
+const indexedUrls = new Set();
+for (const file of sitemapFiles) {
+  const xml = await readFile(join(output, file), 'utf8');
+  for (const [, url] of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) indexedUrls.add(url);
+}
+const expectedUrls = new Set([...pages.values()].filter(page => !page.noindex).map(page => `${origin}${page.route}`));
+for (const url of expectedUrls) check(indexedUrls.has(url), `Indexable page missing from sitemap: ${url}`);
+for (const url of indexedUrls) check(expectedUrls.has(url), `Sitemap contains a retired, missing, or noindex page: ${url}`);
 for (const [file, width, height] of [['og/default.png', 1200, 630], ['favicon.png', 32, 32], ['apple-touch-icon.png', 180, 180]]) {
   if (!files.has(file)) { check(false, `Missing image: ${file}`); continue; }
   const data = await readFile(join(output, file));
@@ -143,6 +173,10 @@ if (errors.length) {
 function check(condition, message) { if (!condition) errors.push(message); }
 function attr(node, name) { return node?.attrs?.find(attribute => attribute.name === name)?.value || ''; }
 function text(node) { return node?.nodeName === '#text' ? node.value : (node?.childNodes || []).map(text).join(''); }
+function accessibleText(node) {
+  if (!node || attr(node, 'aria-hidden') === 'true') return '';
+  return node.nodeName === '#text' ? node.value : (node.childNodes || []).map(accessibleText).join('');
+}
 function elements(node) { return [...(node.tagName ? [node] : []), ...(node.childNodes || []).flatMap(elements)]; }
 function metadata(page, name) { return attr(page.nodes.find(node => node.tagName === 'meta' && (attr(node, 'name') === name || attr(node, 'property') === name)), 'content'); }
 function markedHidden(node) {

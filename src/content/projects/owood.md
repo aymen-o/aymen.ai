@@ -1,11 +1,11 @@
 ---
 title: "owood"
-description: "A wooden watch brand I founded at 18. Acquired in 2020."
+description: "A watch brand, from a Kickstarter launch to acquisition."
 locale: en
 translationKey: owood
 status: exited
-tags: ["Shopify", "E-commerce", "Entrepreneurship"]
-order: 3
+tags: ["Shopify", "Product", "E-commerce"]
+order: 4
 ---
 
-Built a wooden watch brand from the first concept to revenue, with a Kickstarter-funded launch. I handled product development, branding, the Shopify store, marketing, and fulfillment. The business was acquired by a private buyer in 2020.
+I founded owood at 18. I built the wooden-watch product and Shopify store, launched it through Kickstarter, and handled branding, marketing, and fulfillment. The business was acquired in 2020.

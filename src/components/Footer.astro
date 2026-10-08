@@ -1,16 +1,35 @@
 ---
-import { SITE, AUTHOR, SOCIAL_LINKS } from '../lib/constants';
-import { getCopy, type Locale } from '../lib/i18n';
+import SocialLinks from './SocialLinks.astro';
+import { SITE, AUTHOR } from '../lib/constants';
+import type { Locale } from '../lib/i18n';
 interface Props { locale?: Locale; }
 const { locale = 'en' } = Astro.props;
-const copy = getCopy(locale);
+const commandLabel = { en: 'Open commands', fr: 'Ouvrir les commandes', ar: 'فتح الأوامر' }[locale];
 ---
-<footer class="mt-16 border-t border-border">
-  <div class="mx-auto flex max-w-2xl flex-col items-start gap-5 px-6 py-12">
-    <a href={`mailto:${SITE.email}`} dir="ltr" class="font-mono text-sm underline-offset-4 hover:underline">{SITE.email}</a>
-    <nav aria-label={copy.common.contact} class="flex flex-wrap gap-x-6 gap-y-2">
-      {SOCIAL_LINKS.map(link => <a href={link.url} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center font-mono text-xs text-text-secondary hover:text-text">{link.name}<span aria-hidden="true" class="ms-1">↗</span></a>)}
-    </nav>
-    <p class="font-mono text-xs text-text-secondary">© {new Date().getUTCFullYear()} <bdi>{AUTHOR.name}</bdi></p>
+<footer class="site-footer">
+  <div class="footer-shell">
+    <div class="footer-main">
+      <a href={`mailto:${SITE.email}`} class="footer-email"><bdi dir="ltr">{SITE.email}</bdi></a>
+      <SocialLinks locale={locale} withEmail={false} />
+    </div>
+    <div class="footer-bottom">
+      <p>© {new Date().getUTCFullYear()} <bdi>{AUTHOR.name}</bdi></p>
+      <button type="button" class="command-trigger" data-command-trigger aria-label={commandLabel} aria-keyshortcuts="Meta+K Control+K" title={commandLabel} hidden><kbd><span data-command-modifier>⌘</span><span>K</span></kbd></button>
+    </div>
   </div>
 </footer>
+<style>
+  .site-footer { margin-block-start: 5rem; border-block-start: 1px solid var(--border); }
+  .footer-shell { max-width: 48rem; padding: 2rem 1.5rem 1.5rem; margin-inline: auto; }
+  .footer-main, .footer-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; }
+  .footer-email { font-family: var(--font-mono); font-size: .8rem; min-height: 44px; display: inline-flex; align-items: center; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 5px; transition: text-decoration-color 180ms ease; }
+  .footer-email:hover, .footer-email:focus-visible { text-decoration-color: var(--text-secondary); }
+  .footer-bottom { margin-block-start: 1rem; color: var(--text-secondary); font-family: var(--font-mono); font-size: .625rem; }
+  .command-trigger { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 50px; cursor: pointer; }
+  .command-trigger[hidden] { display: none; }
+  kbd { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .4rem; border: 1px solid var(--border); border-block-end-width: 2px; border-radius: 5px; font-family: var(--font-mono); font-size: .65rem; color: var(--text-secondary); transition: color 150ms ease, border-color 150ms ease, transform 150ms ease; }
+  .command-trigger:hover kbd { color: var(--text); border-color: var(--text-secondary); transform: translateY(-2px); }
+  :global([lang='ar']) .footer-bottom { font-family: var(--font-arabic); }
+  @media (max-width: 520px) { .footer-shell { padding-inline: 1rem; } }
+  @media (prefers-reduced-motion: reduce) { .command-trigger:hover kbd { transform: none; } }
+</style>

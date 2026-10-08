@@ -1,0 +1,113 @@
+---
+import type { Locale } from '../lib/i18n';
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const text = {
+  en: { label: 'Inside the workflow', tubing: 'Tubing', paut: 'PAUT', caption: 'Two paths from inspection requirements to a quote request.', open: 'Open the live tool', steps: ['Define the inspection', 'Resolve compatibility', 'Build the quote request'], tubingInputs: 'Material · OD / ID · wall thickness · BWG', tubingMatch: 'Probe diameter, fill factor, frequency and cable options.', tubingQuote: 'Configured part numbers and quantities, ready for a quote.', pautInputs: 'Case style · array type · MHz · elements', pautMatch: 'Matching probes, then wedges compatible with the selected cases.', pautQuote: 'Probes, optional wedges and custom requests in one selection.', drawing: ['Tube geometry', 'Probe + wedge'] },
+  fr: { label: 'Le parcours', tubing: 'Tubes', paut: 'PAUT', caption: 'Deux parcours, des exigences d’inspection à la demande de soumission.', open: 'Ouvrir l’outil', steps: ['Définir l’inspection', 'Vérifier la compatibilité', 'Préparer la soumission'], tubingInputs: 'Matériau · Ø ext. / int. · épaisseur · BWG', tubingMatch: 'Diamètre de sonde, taux de remplissage, fréquence et câbles.', tubingQuote: 'Références configurées et quantités pour la demande de soumission.', pautInputs: 'Boîtier · type de réseau · MHz · éléments', pautMatch: 'Sondes correspondantes, puis sabots compatibles avec les boîtiers choisis.', pautQuote: 'Sondes, sabots facultatifs et demandes personnalisées dans une sélection.', drawing: ['Géométrie du tube', 'Sonde + sabot'] },
+  ar: { label: 'كيف تعمل الأدوات', tubing: 'الأنابيب', paut: 'PAUT', caption: 'مساران من متطلبات الفحص إلى طلب عرض السعر.', open: 'افتح الأداة', steps: ['تحديد متطلبات الفحص', 'مطابقة المكوّنات', 'إعداد طلب عرض السعر'], tubingInputs: 'المادة · القطر الخارجي / الداخلي · سماكة الجدار · BWG', tubingMatch: 'قطر المجسّ ونسبة الملء والتردد وخيارات الكابل.', tubingQuote: 'أرقام القطع ومواصفاتها وكمياتها جاهزة لطلب عرض السعر.', pautInputs: 'نوع الغلاف · نوع المصفوفة · MHz · عدد العناصر', pautMatch: 'المجسّات المطابقة، ثم الأوتاد المتوافقة مع الأغلفة المختارة.', pautQuote: 'المجسّات والأوتاد الاختيارية والطلبات المخصّصة في اختيار واحد.', drawing: ['هندسة الأنبوب', 'مجسّ + وتد'] },
+}[locale];
+const paths = locale === 'fr'
+ ? ['https://eddyfi.com/fr/outils/createur-sondes-tubes', 'https://eddyfi.com/fr/outils/selecteur-sondes-paut']
+ : ['https://eddyfi.com/en/tools/tubing-probe-creator', 'https://eddyfi.com/en/tools/paut-probe-finder'];
+const modes = [
+ { key: 'tubing', title: text.tubing, lines: [text.tubingInputs, text.tubingMatch, text.tubingQuote] },
+ { key: 'paut', title: text.paut, lines: [text.pautInputs, text.pautMatch, text.pautQuote] },
+];
+---
+<div class="ndt-flow">
+  <div class="flow-top">
+    <span class="flow-label">{text.label}</span>
+    <div class="flow-tabs" role="group" aria-label={text.label}>
+      {modes.map((mode, i) => <button type="button" class="flow-tab" data-mode={mode.key} aria-pressed={i === 0 ? 'true' : 'false'} aria-controls={`flow-${mode.key}`}>{mode.title}</button>)}
+    </div>
+  </div>
+  {modes.map((mode, i) => <section class="flow-panel" id={`flow-${mode.key}`} data-panel={mode.key} aria-label={mode.title}>
+    <div class="flow-body">
+      <div class="drawing" aria-hidden="true" dir="ltr">
+        {mode.key === 'tubing' ? <svg viewBox="0 0 180 158" fill="none" stroke="currentColor" stroke-width="1">
+          <path class="construction" d="M12 77h156M90 5v145" stroke-dasharray="3 5" />
+          <circle cx="90" cy="77" r="49" class="tube-outer" />
+          <circle cx="90" cy="77" r="37" />
+          <circle cx="90" cy="77" r="27" class="probe-core" />
+          <circle cx="90" cy="77" r="32" class="scan-ring" />
+          <path d="M41 135h98m-98-5v10m98-10v10M41 114v30m98-30v30" class="dimensions" />
+          <path d="m85 71 5-5 5 5m-5-5v22m-5-5 5 5 5-5" />
+          <text x="90" y="154" text-anchor="middle" stroke="none">OD / ID</text>
+          <text x="147" y="51" stroke="none">t</text>
+          <path class="dimensions" d="m131 44 14-9m-26 18 26-18" />
+        </svg> : <svg viewBox="0 0 180 158" fill="none" stroke="currentColor" stroke-width="1">
+          <path class="construction" d="M12 132h156M90 5v145" stroke-dasharray="3 5" />
+          <rect x="48" y="25" width="84" height="29" rx="4" />
+          {Array.from({length: 12},(_,n)=><path d={`M${53+n*6.6} 34v15`} class="array-element" style={`--element:${n}`} />)}
+          <path d="m48 54-19 33h123l-20-33H48Z" class="wedge" />
+          <path d="M18 87h144v45H18z" class="material" />
+          <path d="m63 55 51 77m-43-77 51 77m-42-77 51 77m-43-77 51 77" class="sound-path" />
+          <path d="M55 13h70m-70-4v8m70-8v8" class="dimensions" />
+          <text x="90" y="154" text-anchor="middle" stroke="none">MHz · n elements</text>
+        </svg>}
+        <span class="drawing-caption">{text.drawing[i]}</span>
+      </div>
+      <ol class="flow-steps">
+        {mode.lines.map((line, n) => <li><span class="step-number" aria-hidden="true">0{n+1}</span><div><strong>{text.steps[n]}</strong><p>{line}</p></div></li>)}
+      </ol>
+    </div>
+    <a class="live-tool" href={paths[i]} target="_blank" rel="noopener noreferrer">{text.open}<span aria-hidden="true">↗</span></a>
+  </section>)}
+  <p class="flow-caption">{text.caption}</p>
+</div>
+<style>
+  .ndt-flow { margin: 1.5rem 0 .4rem; border: 1px solid var(--border); border-radius: 9px; background: color-mix(in srgb, var(--bg-secondary) 40%, transparent); overflow: clip; }
+  .flow-top { display: flex; justify-content: space-between; gap: .7rem; align-items: center; padding: .6rem 1rem; border-bottom: 1px solid var(--border); }
+  .flow-label { font-family: var(--font-mono); color: var(--text-secondary); font-size: .65rem; }
+  .flow-tabs { display: none; gap: .2rem; }
+  .ndt-flow[data-ready] .flow-tabs { display: flex; }
+  .flow-tab { min-height: 38px; padding: .35rem .85rem; border-radius: 5px; font-family: var(--font-mono); font-size: .7rem; color: var(--text-secondary); }
+  .flow-tab[aria-pressed="true"] { color: var(--text); background: var(--bg); box-shadow: 0 0 0 1px var(--border); }
+  .flow-panel[hidden] { display: none; }
+  .flow-body { display: grid; grid-template-columns: 165px 1fr; align-items: center; gap: 1.5rem; padding: 1.4rem 1.2rem .4rem; }
+  .drawing { color: var(--text-secondary); display: grid; text-align: center; gap: .45rem; }
+  svg { width: 100%; height: auto; overflow: visible; }
+  svg text { fill: currentColor; font-family: var(--font-mono); font-size: 9px; }
+  .construction { opacity: .2; }
+  .tube-outer, .wedge { stroke: var(--text); }
+  .probe-core, .material { fill: var(--bg); }
+  .probe-core { stroke: var(--text); }
+  .scan-ring { opacity: .45; stroke-dasharray: 2 6; transform-origin: 90px 77px; }
+  .dimensions { opacity: .45; }
+  .sound-path { stroke-dasharray: 3 5; opacity: .55; }
+  .array-element { stroke-width: 2.5; }
+  .drawing-caption { font-family: var(--font-mono); font-size: .6rem; color: var(--text-secondary); }
+  .flow-steps { display: grid; gap: 1rem; }
+  .flow-steps li { display: flex; gap: .65rem; font-size: .72rem; }
+  .step-number { font-family: var(--font-mono); font-size: .6rem; color: var(--text-secondary); padding-top: .12rem; opacity: .75; }
+  strong { font-size: .73rem; font-weight: 500; line-height: 1.7; }
+  .flow-steps p { margin-top: .15rem; color: var(--text-secondary); font-size: .71rem; line-height: 1.6; }
+  .live-tool { display: flex; align-items: center; justify-content: flex-end; gap: .5rem; min-height: 44px; margin: .35rem 1.2rem .2rem; font-size: .68rem; color: var(--text-secondary); }
+  .live-tool:hover { color: var(--text); }
+  .flow-caption { padding: .65rem 1rem; border-top: 1px solid var(--border); font-size: .62rem; line-height: 1.65; color: var(--text-secondary); }
+  @media (prefers-reduced-motion: no-preference) {
+    .scan-ring { animation: scan 14s linear infinite; animation-play-state: paused; }
+    .sound-path { animation: sound 2s linear infinite; animation-play-state: paused; }
+    .ndt-flow:hover .scan-ring, .ndt-flow:focus-within .scan-ring, .ndt-flow:hover .sound-path, .ndt-flow:focus-within .sound-path { animation-play-state: running; }
+    .flow-panel { animation: enter .3s ease-out; }
+    @keyframes scan { to { transform: rotate(360deg); } }
+    @keyframes sound { to { stroke-dashoffset: -16; } }
+    @keyframes enter { from { opacity: .2; transform: translateY(4px); } }
+  }
+  @media (max-width: 600px) { .flow-body { grid-template-columns: 105px 1fr; gap: 1rem; padding-inline: .8rem; } }
+  @media (max-width: 380px) { .flow-body { grid-template-columns: 1fr; } .drawing { width: 130px; margin-inline: auto; } .flow-top { padding-inline: .6rem; } .flow-tab { padding-inline: .6rem; } }
+</style>
+<script>
+  document.querySelectorAll<HTMLElement>('.ndt-flow').forEach(flow => {
+    const buttons = flow.querySelectorAll<HTMLButtonElement>('[data-mode]');
+    const panels = flow.querySelectorAll<HTMLElement>('[data-panel]');
+    const select = (mode: string | undefined) => {
+      buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
+      panels.forEach(panel => { panel.hidden = panel.dataset.panel !== mode; });
+    };
+    buttons.forEach(button => button.addEventListener('click', () => select(button.dataset.mode)));
+    select('tubing');
+    flow.dataset.ready = '';
+  });
+</script>

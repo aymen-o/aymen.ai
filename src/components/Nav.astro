@@ -5,61 +5,54 @@ interface Props { locale?: Locale; }
 const { locale = 'en' } = Astro.props;
 const copy = getCopy(locale);
 const current = stripLocale(Astro.url.pathname);
-const path = current.startsWith('/404') ? '/' : current;
-const items = [
-  { label: copy.nav.home, path: '/' }, { label: copy.nav.about, path: '/about/' },
-  { label: copy.nav.blog, path: '/blog/' }, { label: copy.nav.projects, path: '/projects/' },
-];
-const active = (href: string) => !current.startsWith('/404') && (href === '/' ? path === '/' : path.startsWith(href));
+const isNotFound = current.startsWith('/404');
+const path = isNotFound ? '/' : current;
+const items = [{ label: copy.nav.home, path: '/' }, { label: copy.nav.about, path: '/about/' }, { label: copy.nav.projects, path: '/projects/' }];
+const labels = { en: 'EN', fr: 'FR', ar: 'ع' };
+const active = (href: string) => !isNotFound && (href === '/' ? path === '/' : path.startsWith(href));
 ---
-<header class="site-header sticky top-0 z-50 border-b border-border bg-bg/95 backdrop-blur-lg">
-  <div class="header-row mx-auto flex max-w-2xl items-center gap-3 px-6 py-3">
-    <a href={localizedPath(locale)} class="brand me-auto font-mono text-sm font-bold tracking-tight"><bdi dir="ltr">aymen.ca</bdi></a>
-    <nav class="desktop-nav items-center gap-5" aria-label={copy.nav.label}>
-      {items.map(item => <a href={localizedPath(locale, item.path)} aria-current={active(item.path) ? 'page' : undefined} class="nav-link font-mono text-xs">{item.label}</a>)}
+<header class="site-header">
+  <div class="header-shell">
+    <a href={localizedPath(locale)} class="personal-mark" aria-label={`Aymen El Akbari · ${copy.nav.home}`}><bdi dir="ltr">ay<span aria-hidden="true">.</span></bdi></a>
+    <nav class="primary-nav" aria-label={copy.nav.label}>
+      {items.map(item => <a href={localizedPath(locale, item.path)} aria-current={active(item.path) ? 'page' : undefined} class="nav-link">{item.label}</a>)}
     </nav>
-    <details class="language-picker relative">
-      <summary aria-label={copy.nav.language} class="control font-mono text-xs"><span dir="ltr">{locale.toUpperCase()}</span><span aria-hidden="true">⌄</span></summary>
-      <div class="language-options rounded-md border border-border bg-bg p-2 shadow-lg">
-        {locales.map(lang => <a href={localizedPath(lang, path)} lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} hreflang={lang} aria-current={lang === locale ? 'true' : undefined} class="block rounded px-3 py-2 text-sm hover:bg-bg-secondary">{localeNames[lang]}</a>)}
-      </div>
-    </details>
-    <ThemeToggle locale={locale} />
-    <details class="mobile-nav">
-      <summary class="control" aria-label={copy.nav.openMenu}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></summary>
-      <nav class="mobile-panel border-b border-border bg-bg px-6 py-4" aria-label={copy.nav.label}>
-        {items.map(item => <a href={localizedPath(locale, item.path)} aria-current={active(item.path) ? 'page' : undefined} class="nav-link block rounded-md px-3 py-3 font-mono text-sm hover:bg-bg-secondary">{item.label}</a>)}
+    <div class="header-controls">
+      <nav class="language-links" aria-label={copy.nav.language}>
+        {locales.map(lang => <a href={localizedPath(lang, path)} lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} hreflang={lang} aria-current={lang === locale ? 'true' : undefined} aria-label={localeNames[lang]} title={localeNames[lang]}>{labels[lang]}</a>)}
       </nav>
-    </details>
+      <span class="control-divider" aria-hidden="true"></span>
+      <ThemeToggle locale={locale} />
+    </div>
   </div>
 </header>
 <style>
-  .nav-link { color: var(--text-secondary); min-height: 44px; display: inline-flex; align-items: center; }
-  .nav-link:hover, .nav-link[aria-current='page'] { color: var(--text); }
-  .desktop-nav .nav-link[aria-current='page'] { position: relative; }
-  .desktop-nav .nav-link[aria-current='page']::after { content: ''; position: absolute; inset-block-end: 3px; inset-inline-start: calc(50% - 2px); width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
-  .control { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: .3rem; cursor: pointer; list-style: none; border-radius: 4px; }
-  summary::-webkit-details-marker { display: none; }
-  .control:hover { background: var(--bg-secondary); }
-  .language-options { position: absolute; inset-inline-end: 0; inset-block-start: calc(100% + .5rem); min-width: 130px; }
-  .language-options a[aria-current] { text-decoration: underline; text-underline-offset: 4px; }
-  .desktop-nav { display: flex; }
-  .mobile-nav { display: none; }
-  .mobile-panel { position: absolute; inset-inline: 0; inset-block-start: 100%; }
-  .mobile-panel .nav-link { display: flex; }
-  @media (max-width: 639px) { .desktop-nav { display: none; } .mobile-nav { display: block; } .header-row { gap: .25rem; } }
+  .site-header { position: sticky; inset-block-start: 0; z-index: 50; border-block-end: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .header-shell { max-width: 48rem; margin-inline: auto; padding: .65rem 1.5rem; display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 2rem; }
+  .personal-mark { font-family: var(--font-mono); font-size: 1.25rem; font-weight: 600; letter-spacing: -.09em; min-height: 44px; display: inline-flex; align-items: center; color: var(--text); }
+  .personal-mark span { color: var(--text-secondary); transition: color 180ms ease; }
+  .personal-mark:hover span { color: var(--text); }
+  .primary-nav { display: flex; align-items: center; gap: 1.25rem; }
+  .nav-link { position: relative; display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-mono); font-size: .75rem; color: var(--text-secondary); transition: color 180ms ease; white-space: nowrap; }
+  .nav-link:hover, .nav-link:focus-visible, .nav-link[aria-current='page'] { color: var(--text); }
+  .nav-link::after { content: ''; position: absolute; inset-block-end: 3px; inset-inline-start: calc(50% - 2px); width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0; transform: translateY(3px); transition: transform 200ms ease, opacity 200ms ease; }
+  .nav-link[aria-current='page']::after { opacity: 1; transform: translateY(0); }
+  .header-controls, .language-links { display: flex; align-items: center; }
+  .header-controls { gap: .3rem; }
+  .language-links { gap: .15rem; }
+  .language-links a { min-width: 30px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: .625rem; color: var(--text-secondary); border-radius: 5px; transition: color 180ms ease, background-color 180ms ease; }
+  .language-links a[lang='ar'] { font-family: var(--font-arabic); font-size: .85rem; }
+  .language-links a:hover, .language-links a:focus-visible { color: var(--text); background: color-mix(in srgb, var(--text) 4%, transparent); }
+  .language-links a[aria-current] { color: var(--text); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; }
+  .control-divider { width: 1px; height: 14px; background: var(--border); margin-inline: .1rem; }
+  :global([lang='ar']) .nav-link { font-family: var(--font-arabic); font-size: .8rem; }
+  @media (max-width: 520px) {
+    .header-shell { padding: .4rem 1rem; column-gap: .75rem; grid-template-columns: auto 1fr; }
+    .personal-mark { grid-column: 1; grid-row: 1; }
+    .primary-nav { grid-column: 2; grid-row: 1; justify-content: flex-end; gap: 1.15rem; }
+    .header-controls { grid-column: 1 / -1; grid-row: 2; justify-content: flex-end; margin-block-start: -.25rem; }
+    .header-controls :global(.theme-toggle) { height: 36px; }
+    .language-links a { min-height: 36px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .nav-link::after { transition: none; } }
 </style>
-<script>
-  // Native details keeps navigation available without JavaScript.
-  const menus = document.querySelectorAll<HTMLDetailsElement>('.site-header details');
-  menus.forEach(menu => {
-    menu.addEventListener('toggle', () => { if (menu.open) menus.forEach(other => { if (other !== menu) other.open = false; }); });
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key !== 'Escape') return;
-    menus.forEach(menu => { if (menu.open) { menu.open = false; menu.querySelector<HTMLElement>('summary')?.focus(); } });
-  });
-  document.addEventListener('click', event => {
-    menus.forEach(menu => { if (event.target instanceof Node && !menu.contains(event.target)) menu.open = false; });
-  });
-</script>

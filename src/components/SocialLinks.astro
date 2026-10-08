@@ -1,0 +1,18 @@
+---
+import Icon from './Icon.astro';
+import { SOCIAL_LINKS, SITE } from '../lib/constants';
+import { getCopy, type Locale } from '../lib/i18n';
+interface Props { locale?: Locale; withEmail?: boolean; class?: string; }
+const { locale = 'en', withEmail = true, class: className } = Astro.props;
+const copy = getCopy(locale);
+---
+<nav class:list={['social-links', className]} aria-label={copy.common.contact}>
+  {SOCIAL_LINKS.map(link => <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={link.name} title={link.name} class="social-link"><Icon name={link.icon} size={20} /></a>)}
+  {withEmail && <a href={`mailto:${SITE.email}`} aria-label={SITE.email} title={SITE.email} class="social-link"><Icon name="mail" size={20} /></a>}
+</nav>
+<style>
+  .social-links { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; }
+  .social-link { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 44px; color: var(--text-secondary); border-radius: 7px; transition: color 180ms ease, transform 180ms ease, background-color 180ms ease; }
+  .social-link:hover, .social-link:focus-visible { color: var(--text); transform: translateY(-3px); background: color-mix(in srgb, var(--text) 4%, transparent); }
+  @media (prefers-reduced-motion: reduce) { .social-link:hover, .social-link:focus-visible { transform: none; } }
+</style>

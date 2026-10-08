@@ -8,6 +8,6 @@ const { locale = 'en', ...props } = Astro.props;
 ---
 <BaseLayout {...props} locale={locale}>
   <Nav locale={locale} />
-  <main id="main-content" tabindex="-1" class="mx-auto max-w-2xl px-6 py-12 sm:py-16"><slot /></main>
+  <main id="main-content" tabindex="-1" class="mx-auto max-w-3xl px-6 py-10 sm:py-14"><slot /></main>
   <Footer locale={locale} />
 </BaseLayout>

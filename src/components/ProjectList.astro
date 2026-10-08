@@ -1,22 +1,59 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import { render, type CollectionEntry } from 'astro:content';
+import NdtFlow from './NdtFlow.astro';
 import { getCopy, type Locale } from '../lib/i18n';
 interface Props { projects: CollectionEntry<'projects'>[]; locale: Locale; detailed?: boolean; }
 const { projects, locale, detailed = false } = Astro.props;
 const copy = getCopy(locale);
 const Heading = detailed ? 'h2' : 'h3';
-const colors: Record<string, string> = { active: '#6ba57b', shipped: '#929292', building: '#b48b58', employed: '#7995b3', exited: '#a296b8', running: '#7995b3', sunset: '#929292' };
+const descriptions = { en: 'A closer look', fr: 'En détail', ar: 'نظرة أقرب' };
+const icons: Record<string, string> = {
+  'eddyfi-tools': 'M4 17V7m4 12V5m4 16V3m4 16V5m4 12V7',
+  'inworld-ai': 'M9 3a5 5 0 0 0-5 5v1a4 4 0 0 0 0 7 4 4 0 0 0 5 5V3Zm6 0a5 5 0 0 1 5 5v1a4 4 0 0 1 0 7 4 4 0 0 1-5 5V3ZM4 9h3m-3 7h3m10-7h3m-3 7h3',
+  'looka': 'm12 3 9 9-9 9-9-9 9-9Zm0 5 4 4-4 4-4-4 4-4Z',
+  'owood': 'M8 3h8l1 5a7 7 0 0 1 0 8l-1 5H8l-1-5a7 7 0 0 1 0-8l1-5Zm4 6v3l2 2',
+};
+const rendered = await Promise.all(projects.map(async project => ({ project, ...(await render(project)) })));
 ---
-<div>
-  {projects.map(project => {
-    const Tag = project.data.url ? 'a' : 'div';
-    return <Tag href={project.data.url} target={project.data.url ? '_blank' : undefined} rel={project.data.url ? 'noopener noreferrer' : undefined} class:list={['project-row -mx-3 block rounded-lg px-3 py-4', project.data.url && 'hover-row transition-colors hover:bg-bg-secondary']}>
-      <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-        <Heading class="font-mono text-sm font-semibold"><bdi>{project.data.title}</bdi>{project.data.url && <span aria-hidden="true" class="ms-2 text-text-secondary">↗</span>}</Heading>
-        <span class="inline-flex items-center gap-1.5 font-mono text-xs text-text-secondary"><span aria-hidden="true" class="inline-block h-1.5 w-1.5 rounded-full" style={`background-color:${colors[project.data.status]}`}></span>{copy.status[project.data.status]}</span>
+<div class="work-list">
+  {rendered.map(({project, Content}) => <article class:list={['work-item', project.data.translationKey === 'eddyfi-tools' && 'featured']} data-reveal>
+    <div class="work-heading">
+      <span class="work-icon" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d={icons[project.data.translationKey] || icons.looka} /></svg></span>
+      <div class="work-title">
+        <Heading>{project.data.url ? <a href={project.data.url} target="_blank" rel="noopener noreferrer"><bdi>{project.data.title}</bdi><span class="external-arrow" aria-hidden="true">↗</span></a> : <bdi>{project.data.title}</bdi>}</Heading>
+        <span class="project-status"><span aria-hidden="true" class:list={['status-dot', project.data.status === 'exited' && 'exited']}></span>{copy.status[project.data.status]}</span>
       </div>
-      <p class="mt-1.5 text-sm leading-relaxed text-text-secondary">{detailed ? (project.body?.trim() || project.data.description) : project.data.description}</p>
-      {detailed && <ul class="mt-3 flex flex-wrap gap-2" aria-label={copy.about.skillsTitle}>{project.data.tags.map(tag => <li class="rounded-full border border-border px-2 py-1 font-mono text-xs text-text-secondary"><bdi>{tag}</bdi></li>)}</ul>}
-    </Tag>;
-  })}
+    </div>
+    <div class="work-content">
+      <p class="work-description">{project.data.description}</p>
+      {project.data.translationKey === 'eddyfi-tools' && <NdtFlow locale={locale} />}
+      {detailed ? <div class="work-detail"><Content /></div> : <details class="work-details"><summary>{descriptions[locale]}<span aria-hidden="true">+</span></summary><div class="work-detail"><Content /></div></details>}
+      {detailed && <ul class="work-tags" aria-label={copy.about.skillsTitle}>{project.data.tags.map(tag => <li><bdi>{tag}</bdi></li>)}</ul>}
+    </div>
+  </article>)}
 </div>
+<style>
+  .work-item { padding: 1.7rem 0 1.5rem; border-bottom: 1px solid var(--border); }
+  .work-heading { display: flex; align-items: center; gap: 1rem; }
+  .work-icon { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 10px; color: var(--text-secondary); background: var(--bg); }
+  .work-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; width: 100%; gap: .4rem 1rem; }
+  h2, h3 { font-size: 1rem; font-weight: 500; line-height: 1.6; }
+  h2 a, h3 a { display: inline-flex; gap: .55rem; align-items: center; min-height: 44px; }
+  .external-arrow { color: var(--text-secondary); font-weight: 400; font-size: .9rem; }
+  .project-status { display: inline-flex; align-items: center; gap: .4rem; color: var(--text-secondary); font-family: var(--font-mono); font-size: .65rem; white-space: nowrap; }
+  .status-dot { width: 4px; height: 4px; border-radius: 50%; background: #739e80; }
+  .status-dot.exited { background: #9c91ae; }
+  .work-content { margin-inline-start: 52px; }
+  .work-description { color: var(--text-secondary); font-size: .88rem; line-height: 1.8; max-width: 36rem; margin-top: .4rem; text-wrap: pretty; }
+  .work-details { margin-top: .7rem; }
+  summary { display: inline-flex; gap: .55rem; align-items: center; min-height: 44px; color: var(--text-secondary); font-size: .7rem; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary span { font-size: 1rem; }
+  details[open] summary span { transform: rotate(45deg); }
+  .work-detail { font-size: .86rem; line-height: 1.85; color: var(--text-secondary); padding: .4rem 0; }
+  .work-detail :global(p + p) { margin-top: .75rem; }
+  .work-tags { display: flex; gap: .5rem 1rem; flex-wrap: wrap; margin-top: 1rem; font-family: var(--font-mono); font-size: .66rem; color: var(--text-secondary); }
+  .work-tags li:not(:last-child)::after { content: '/'; margin-inline-start: 1rem; opacity: .4; }
+  @media (prefers-reduced-motion: no-preference) { .work-icon, .external-arrow, summary span { transition: transform .3s ease, color .3s ease; } .work-item:hover .work-icon { transform: rotate(-6deg); color: var(--text); } a:hover .external-arrow { transform: translate(3px,-3px); } }
+  @media (max-width: 480px) { .work-content { margin-inline-start: 0; } .work-title { align-items: baseline; } h2, h3 { font-size: .9rem; } .work-heading { gap: .7rem; } .work-description { margin-top: .8rem; } }
+</style>

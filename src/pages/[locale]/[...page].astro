@@ -1,23 +1,14 @@
 ---
-import { getCollection, render } from 'astro:content';
 import HomePage from '../../components/pages/HomePage.astro';
 import AboutPage from '../../components/pages/AboutPage.astro';
 import ProjectsPage from '../../components/pages/ProjectsPage.astro';
-import BlogPage from '../../components/pages/BlogPage.astro';
-import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import type { Locale } from '../../lib/i18n';
 export async function getStaticPaths() {
-  const pages = ['fr', 'ar'].flatMap(locale => [undefined, 'about', 'projects', 'blog'].map(page => ({ params: { locale, page }, props: { locale, page, post: undefined } })));
-  const posts = await getCollection('blog', ({data}) => !data.draft && data.locale !== 'en');
-  return [...pages, ...posts.map(post => ({ params: { locale: post.data.locale, page: `blog/${post.data.translationKey}` }, props: { locale: post.data.locale, page: 'post', post } }))];
+  return ['fr', 'ar'].flatMap(locale => [undefined, 'about', 'projects'].map(page => ({ params: { locale, page }, props: { locale, page } })));
 }
-const { page, post } = Astro.props;
+const { page } = Astro.props;
 const locale = Astro.props.locale as Locale;
-const rendered = post ? await render(post) : undefined;
-const Content = rendered?.Content;
 ---
 {page === undefined && <HomePage locale={locale} />}
 {page === 'about' && <AboutPage locale={locale} />}
 {page === 'projects' && <ProjectsPage locale={locale} />}
-{page === 'blog' && <BlogPage locale={locale} />}
-{post && Content && <BlogPostLayout title={post.data.title} description={post.data.description} date={post.data.date} updated={post.data.updated} tags={post.data.tags} content={post.body || ''} locale={locale}><Content /></BlogPostLayout>}

@@ -1,0 +1,167 @@
+---
+import Icon from './Icon.astro';
+import { SITE, SOCIAL_LINKS } from '../lib/constants';
+import { getCopy, localizedPath, type Locale } from '../lib/i18n';
+interface Props { locale?: Locale; }
+const { locale = 'en' } = Astro.props;
+const copy = getCopy(locale);
+const words = {
+  en: { title: 'Quick actions', search: 'Find a page or action…', close: 'Close commands', copy: 'Copy email address', copied: 'Email address copied.', copyFailed: 'Could not copy the email address. Copy it from the field below.', emailLabel: 'Email address', email: 'Send an email', empty: 'No matching actions.', navigate: 'navigate', choose: 'open', escape: 'close' },
+  fr: { title: 'Accès rapide', search: 'Trouver une page ou une action…', close: 'Fermer les commandes', copy: 'Copier l’adresse courriel', copied: 'Adresse courriel copiée.', copyFailed: 'La copie a échoué. Copiez l’adresse courriel ci-dessous.', emailLabel: 'Adresse courriel', email: 'Envoyer un courriel', empty: 'Aucune action correspondante.', navigate: 'parcourir', choose: 'ouvrir', escape: 'fermer' },
+  ar: { title: 'اختصارات', search: 'ابحث عن صفحة أو إجراء…', close: 'إغلاق الاختصارات', copy: 'نسخ عنوان البريد', copied: 'تم نسخ عنوان البريد الإلكتروني.', copyFailed: 'تعذّر نسخ البريد تلقائيًا. انسخ العنوان من الحقل أدناه.', emailLabel: 'عنوان البريد الإلكتروني', email: 'إرسال بريد إلكتروني', empty: 'لا توجد إجراءات مطابقة.', navigate: 'تنقّل', choose: 'فتح', escape: 'إغلاق' },
+}[locale];
+const pages = [
+  { label: copy.nav.home, href: localizedPath(locale), icon: 'home', keywords: 'home accueil الرئيسية' },
+  { label: copy.nav.about, href: localizedPath(locale, '/about/'), icon: 'user', keywords: 'about experience à propos نبذة خبرة' },
+  { label: copy.nav.projects, href: localizedPath(locale, '/projects/'), icon: 'work', keywords: 'work projects projets أعمال مشاريع' },
+];
+---
+<dialog class="command-palette" id="command-palette" aria-labelledby="command-title" data-copied={words.copied} data-copy-failed={words.copyFailed}>
+  <div class="command-search">
+    <Icon name="search" size={19} />
+    <label id="command-title" for="command-search-input" class="sr-only">{words.title}</label>
+    <input id="command-search-input" type="search" autocomplete="off" spellcheck="false" placeholder={words.search} />
+    <button type="button" class="command-close" data-command-close aria-label={words.close}><Icon name="close" size={17} /></button>
+  </div>
+  <ul class="command-list">
+    {pages.map(page => <li data-command-item data-keywords={page.keywords}><a href={page.href} data-command-action class="command-action"><Icon name={page.icon} size={18} /><span>{page.label}</span><span class="command-enter" aria-hidden="true">↵</span></a></li>)}
+    <li class="command-divider" aria-hidden="true"></li>
+    <li data-command-item data-keywords="copy email mail courriel نسخ بريد"><button type="button" data-command-action data-command-copy class="command-action"><Icon name="copy" size={18} /><span>{words.copy}<small><bdi dir="ltr">{SITE.email}</bdi></small></span><span class="command-enter" aria-hidden="true">↵</span></button></li>
+    <li data-command-item data-keywords="email contact mail courriel تواصل بريد"><a href={`mailto:${SITE.email}`} data-command-action class="command-action"><Icon name="mail" size={18} /><span>{words.email}</span><span class="command-enter" aria-hidden="true">↵</span></a></li>
+    {SOCIAL_LINKS.map(link => <li data-command-item data-keywords={link.name}><a href={link.url} target="_blank" rel="noopener noreferrer" data-command-action class="command-action"><Icon name={link.icon} size={18} /><span>{link.name}</span><span class="command-external"><Icon name="arrow-up-right" size={13} /></span></a></li>)}
+  </ul>
+  <p class="command-empty" data-command-empty hidden>{words.empty}</p>
+  <div class="command-bottom">
+    <p class="command-status" id="command-copy-status" data-command-status role="status" aria-live="polite"></p>
+    <div class="manual-copy" data-manual-copy hidden>
+      <label for="command-email-copy">{words.emailLabel}</label>
+      <input id="command-email-copy" type="text" value={SITE.email} readonly dir="ltr" spellcheck="false" autocomplete="off" aria-describedby="command-copy-status" />
+    </div>
+    <p class="command-hint"><span><kbd>↑↓</kbd> {words.navigate}</span><span><kbd>↵</kbd> {words.choose}</span><span><kbd>esc</kbd> {words.escape}</span></p>
+  </div>
+</dialog>
+<style>
+  .command-palette { width: min(34rem, calc(100vw - 2rem)); max-height: min(38rem, calc(100dvh - 3rem)); margin: 12vh auto auto; padding: 0; color: var(--text); background: var(--bg); border: 1px solid color-mix(in srgb, var(--text) 17%, transparent); border-radius: 13px; box-shadow: 0 25px 100px #0006; overflow: auto; overscroll-behavior: contain; }
+  .command-palette::backdrop { background: #0007; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+  .command-palette[open] { animation: command-enter 160ms ease-out; }
+  @keyframes command-enter { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: none; } }
+  .command-search { display: flex; align-items: center; gap: .75rem; border-block-end: 1px solid var(--border); padding-block: .5rem; padding-inline: 1.1rem .75rem; color: var(--text-secondary); }
+  .command-search input { min-width: 0; flex: 1; height: 44px; background: transparent; color: var(--text); font-family: var(--font-sans); font-size: .9rem; border: 0; outline: none; }
+  .command-search input::placeholder { color: var(--text-secondary); }
+  .command-search input::-webkit-search-cancel-button { display: none; }
+  .command-search:focus-within { box-shadow: inset 0 -1px 0 var(--text-secondary); }
+  .command-close { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 44px; border-radius: 5px; color: var(--text-secondary); cursor: pointer; }
+  .command-close:hover { color: var(--text); }
+  .command-list { padding: .45rem; margin: 0; list-style: none; }
+  .command-list [hidden], .command-empty[hidden] { display: none; }
+  .command-action { display: flex; align-items: center; gap: .8rem; width: 100%; min-height: 45px; padding: .65rem .7rem; border-radius: 6px; color: var(--text-secondary); text-align: start; font-family: var(--font-sans); font-size: .85rem; cursor: pointer; transition: color 130ms ease, background-color 130ms ease; }
+  .command-action:hover, .command-action:focus-visible { background: var(--bg-secondary); color: var(--text); outline-offset: -2px; }
+  .command-action > :global(svg) { flex-shrink: 0; }
+  .command-action small { display: block; margin-block-start: .15rem; font-family: var(--font-mono); font-size: .65rem; color: var(--text-secondary); }
+  .command-enter, .command-external { margin-inline-start: auto; display: inline-flex; align-items: center; }
+  .command-enter { opacity: 0; transition: opacity 130ms ease; }
+  .command-action:hover .command-enter, .command-action:focus-visible .command-enter { opacity: 1; }
+  .command-divider { border-block-start: 1px solid var(--border); margin: .35rem .7rem; }
+  .command-empty { padding: 1.5rem; color: var(--text-secondary); font-size: .85rem; text-align: center; }
+  .command-bottom { padding: .5rem 1rem; border-block-start: 1px solid var(--border); }
+  .command-status { color: var(--text); font-size: .75rem; }
+  .command-status:not(:empty) { padding-block: .4rem; }
+  .manual-copy { margin-block: .5rem .85rem; }
+  .manual-copy[hidden] { display: none; }
+  .manual-copy label { display: block; margin-block-end: .4rem; font-size: .7rem; color: var(--text-secondary); }
+  .manual-copy input { width: 100%; min-height: 44px; padding: .65rem .75rem; border: 1px solid var(--border); border-radius: 5px; background: var(--bg-secondary); color: var(--text); font-family: var(--font-mono); font-size: .875rem; user-select: all; }
+  .command-hint { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .8rem; color: var(--text-secondary); font-size: .6rem; }
+  .command-hint kbd { font-family: var(--font-mono); margin-inline-end: .2rem; }
+  :global(html.command-palette-open) { overflow: hidden; }
+  :global([lang='ar']) .command-search input, :global([lang='ar']) .command-action { font-family: var(--font-arabic); }
+  @media (max-width: 520px) { .command-palette { margin-block-start: 7vh; } .command-search input, .manual-copy input { font-size: 1rem; } }
+  @media (prefers-reduced-motion: reduce) { .command-palette[open] { animation: none; } }
+</style>
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('#command-palette');
+  const search = document.querySelector<HTMLInputElement>('#command-search-input');
+  if (dialog && search && typeof dialog.showModal === 'function') {
+    const items = Array.from(dialog.querySelectorAll<HTMLLIElement>('[data-command-item]'));
+    const empty = dialog.querySelector<HTMLElement>('[data-command-empty]');
+    const status = dialog.querySelector<HTMLElement>('[data-command-status]');
+    const manualCopy = dialog.querySelector<HTMLElement>('[data-manual-copy]');
+    const manualInput = dialog.querySelector<HTMLInputElement>('#command-email-copy');
+    const triggers = document.querySelectorAll<HTMLButtonElement>('[data-command-trigger]');
+    let previousFocus: HTMLElement | null = null;
+    const normalize = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
+    const actions = () => items.filter(item => !item.hidden).map(item => item.querySelector<HTMLElement>('[data-command-action]')!).filter(Boolean);
+    const filter = () => {
+      const terms = normalize(search.value).trim().split(/\s+/).filter(Boolean);
+      items.forEach(item => {
+        const content = normalize(`${item.dataset.keywords || ''} ${item.textContent || ''}`);
+        item.hidden = !terms.every(term => content.includes(term));
+      });
+      if (empty) empty.hidden = actions().length > 0;
+      dialog.querySelectorAll<HTMLElement>('.command-divider').forEach(divider => divider.hidden = terms.length > 0);
+    };
+    const open = () => {
+      if (dialog.open) return;
+      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      search.value = '';
+      if (status) status.textContent = '';
+      if (manualCopy) manualCopy.hidden = true;
+      filter();
+      dialog.showModal();
+      document.documentElement.classList.add('command-palette-open');
+      search.focus();
+    };
+    const close = () => dialog.close();
+    triggers.forEach(trigger => { trigger.hidden = false; trigger.addEventListener('click', open); });
+    const modifier = /Macintosh|Mac OS X|iPhone|iPad|iPod/.test(navigator.userAgent) ? '⌘' : 'Ctrl';
+    document.querySelectorAll<HTMLElement>('[data-command-modifier]').forEach(element => element.textContent = modifier);
+    document.addEventListener('keydown', event => {
+      if ((event.metaKey || event.ctrlKey) && !event.altKey && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (dialog.open) close(); else open();
+      }
+    });
+    dialog.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (event.target === manualInput) return;
+      const visible = actions();
+      if (!visible.length) return;
+      const current = visible.indexOf(document.activeElement as HTMLElement);
+      if (event.key === 'ArrowDown') { event.preventDefault(); visible[(current + 1) % visible.length]?.focus(); }
+      else if (event.key === 'ArrowUp') { event.preventDefault(); if (current <= 0) search.focus(); else visible[current - 1]?.focus(); }
+      else if (event.key === 'Enter' && document.activeElement === search) { event.preventDefault(); visible[0]?.click(); }
+    });
+    search.addEventListener('input', filter);
+    dialog.querySelector('[data-command-close]')?.addEventListener('click', close);
+    dialog.querySelectorAll('a[data-command-action]').forEach(link => link.addEventListener('click', close));
+    dialog.addEventListener('click', event => {
+      if (event.target !== dialog) return;
+      const bounds = dialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) close();
+    });
+    dialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('command-palette-open');
+      if (previousFocus?.isConnected) previousFocus.focus();
+    });
+    dialog.querySelector('[data-command-copy]')?.addEventListener('click', async () => {
+      const address = dialog.querySelector<HTMLAnchorElement>('a[href^="mailto:"]')?.href.replace(/^mailto:/, '') || manualInput?.value || '';
+      try {
+        if (!address || !navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(address);
+        if (manualCopy) manualCopy.hidden = true;
+        if (status) status.textContent = dialog.dataset.copied || '';
+      } catch {
+        if (status) status.textContent = dialog.dataset.copyFailed || '';
+        if (manualCopy && manualInput) {
+          manualCopy.hidden = false;
+          manualInput.value = address;
+          manualInput.focus();
+          manualInput.select();
+        }
+      }
+    });
+  }
+</script>

@@ -5,6 +5,7 @@ locale: ar
 translationKey: workflow-tools
 status: building
 tags: ["الأتمتة", "الذكاء الاصطناعي"]
+draft: true
 order: 2
 ---
 

@@ -1,6 +1,8 @@
 ---
 import { createHash } from 'node:crypto';
 import GrainCanvas from '../components/GrainCanvas.astro';
+import Motion from '../components/Motion.astro';
+import CommandPalette from '../components/CommandPalette.astro';
 import { SITE, AUTHOR, SOCIAL_LINKS } from '../lib/constants';
 import { getCopy, locales, localizedPath, stripLocale, type Locale } from '../lib/i18n';
 import '../styles/global.css';
@@ -23,7 +25,7 @@ const structuredData = {
   '@graph': [
     { '@type': 'Person', '@id': personId, name: AUTHOR.name, alternateName: AUTHOR.nameArabic,
       url: `${SITE.url}/`, jobTitle: AUTHOR.role, sameAs: SOCIAL_LINKS.map(link => link.url),
-      knowsLanguage: ['en', 'fr', 'ar'], homeLocation: { '@type': 'City', name: 'Québec City' },
+      homeLocation: { '@type': 'Country', name: 'Canada' },
       alumniOf: { '@type': 'CollegeOrUniversity', name: 'Université Laval' } },
     { '@type': 'WebSite', '@id': `${SITE.url}/#website`, name: AUTHOR.name, url: `${SITE.url}/`,
       inLanguage: ['en', 'fr', 'ar'], publisher: { '@id': personId } },
@@ -76,7 +78,9 @@ const structuredData = {
   <body class="min-h-screen bg-bg text-text">
     <a href="#main-content" class="skip-link">{copy.common.skipToContent}</a>
     <GrainCanvas />
+    <Motion />
     <slot />
+    <CommandPalette locale={locale} />
   </body>
 </html>
 <style>

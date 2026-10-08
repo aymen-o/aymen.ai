@@ -6,6 +6,7 @@ translationKey: personal-site
 url: "https://aymen.ca/ar/"
 status: shipped
 tags: ["Astro", "TypeScript", "إتاحة الوصول"]
+draft: true
 order: 4
 ---
 

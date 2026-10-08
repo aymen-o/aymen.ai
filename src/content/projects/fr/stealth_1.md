@@ -5,6 +5,7 @@ locale: fr
 translationKey: workflow-tools
 status: building
 tags: ["Automatisation", "IA"]
+draft: true
 order: 2
 ---
 

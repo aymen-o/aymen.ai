@@ -11,5 +11,5 @@ export const AUTHOR = {
 export const SOCIAL_LINKS = [
   { name: 'LinkedIn', url: 'https://www.linkedin.com/in/aymenakb/', icon: 'linkedin' },
   { name: 'GitHub', url: 'https://github.com/aymen-o', icon: 'github' },
-  { name: 'X', url: 'https://x.com/aymenakx', icon: 'x' },
+  { name: 'X', url: 'https://x.com/aymenkx', icon: 'x' },
 ] as const;

@@ -13,7 +13,7 @@ interface Props {
 const { title, description, ogImage = '/og/default.png', locale = 'en', article, noindex = false } = Astro.props;
 const copy = getCopy(locale);
 const pageDescription = description || copy.home.description;
-const fullTitle = title ? `${title} — ${AUTHOR.name}` : `${AUTHOR.name} — ${copy.home.role}`;
+const fullTitle = locale === 'ar' ? AUTHOR.nameArabic : AUTHOR.name;
 const path = stripLocale(Astro.url.pathname);
 const canonicalURL = new URL(noindex ? '/404.html' : localizedPath(locale, path), SITE.url);
 const ogLocale = { en: 'en_CA', fr: 'fr_CA', ar: 'ar' };
@@ -27,7 +27,7 @@ const structuredData = {
       url: `${SITE.url}/`, jobTitle: AUTHOR.role, sameAs: SOCIAL_LINKS.map(link => link.url),
       homeLocation: { '@type': 'Country', name: 'Canada' },
       alumniOf: { '@type': 'CollegeOrUniversity', name: 'Université Laval' } },
-    { '@type': 'WebSite', '@id': `${SITE.url}/#website`, name: AUTHOR.name, url: `${SITE.url}/`,
+    { '@type': 'WebSite', '@id': `${SITE.url}/#website`, name: fullTitle, url: `${SITE.url}/`,
       inLanguage: ['en', 'fr', 'ar'], publisher: { '@id': personId } },
     { '@type': article ? 'BlogPosting' : path === '/about/' ? 'AboutPage' : 'WebPage',
       '@id': canonicalURL.toString(), url: canonicalURL.toString(), name: fullTitle,
@@ -52,7 +52,7 @@ const structuredData = {
     {!noindex && locales.map(lang => <link rel="alternate" hreflang={lang} href={new URL(localizedPath(lang, path), SITE.url)} />)}
     {!noindex && <link rel="alternate" hreflang="x-default" href={new URL(localizedPath('en', path), SITE.url)} />}
     <meta property="og:type" content={article ? 'article' : 'website'} />
-    <meta property="og:site_name" content={AUTHOR.name} />
+    <meta property="og:site_name" content={fullTitle} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={pageDescription} />

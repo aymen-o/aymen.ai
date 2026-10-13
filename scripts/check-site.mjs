@@ -48,7 +48,7 @@ for (const page of pages.values()) {
   const ids = page.nodes.map(node => attr(node, 'id')).filter(Boolean);
   check(ids.length === new Set(ids).size, `${page.route}: duplicate element IDs`);
   const title = text(page.nodes.find(node => node.tagName === 'title')).trim();
-  check(title.includes('Aymen El Akbari'), `${page.route}: SEO title omits full professional name`);
+  check(title === (page.locale === 'ar' ? 'أيمن الأكبري' : 'Aymen El Akbari'), `${page.route}: title must contain only the localized professional name`);
   check(!title.includes('aymen.ai'), `${page.route}: title has outdated domain branding`);
   check(Boolean(metadata(page, 'description').trim()), `${page.route}: missing meta description`);
   const canonicalTags = page.nodes.filter(node => node.tagName === 'link' && attr(node, 'rel') === 'canonical');

@@ -1,0 +1,106 @@
+---
+// A single, decorative preview shared by the home intro links. Images load on intent.
+---
+<div class="company-preview" data-company-preview hidden aria-hidden="true">
+  <img data-preview-image width="640" height="360" alt="" decoding="async" />
+  <div class="preview-address" dir="ltr"><span data-preview-domain></span><span aria-hidden="true">↗</span></div>
+</div>
+<style>
+  .company-preview { position: fixed; inset: 0 auto auto 0; z-index: 100; width: min(260px, calc(100vw - 24px)); overflow: hidden; border: 1px solid var(--border); border-radius: 9px; background: var(--bg-secondary); color: var(--text-secondary); box-shadow: 0 12px 36px #0003, 0 2px 8px #0001; }
+  .company-preview[hidden] { display: none; }
+  .company-preview img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--bg-secondary); }
+  .preview-address { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 10px; line-height: 1.4; }
+  @media (forced-colors: active) { .company-preview { border-color: CanvasText; } }
+</style>
+<script>
+  const panel = document.querySelector<HTMLElement>('[data-company-preview]');
+  const screenshot = panel?.querySelector<HTMLImageElement>('[data-preview-image]');
+  const domain = panel?.querySelector<HTMLElement>('[data-preview-domain]');
+  if (panel && screenshot && domain) {
+    // Keep the floating card outside the hero's decorative clipping and entrance animation.
+    document.body.append(panel);
+    const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let active: HTMLAnchorElement | null = null;
+    let hovered: HTMLAnchorElement | null = null;
+    let focused: HTMLAnchorElement | null = null;
+    let overPanel = false;
+    let closeTimer = 0;
+    let reveal: Animation | undefined;
+    let generation = 0;
+
+    const hide = () => {
+      clearTimeout(closeTimer);
+      generation++;
+      active = null;
+      overPanel = false;
+      reveal?.cancel();
+      panel.hidden = true;
+    };
+    const position = (link: HTMLAnchorElement) => {
+      const anchor = link.getBoundingClientRect();
+      const viewport = window.visualViewport;
+      const left = viewport?.offsetLeft ?? 0;
+      const top = viewport?.offsetTop ?? 0;
+      const width = viewport?.width ?? innerWidth;
+      const height = viewport?.height ?? innerHeight;
+      panel.style.maxWidth = `${Math.max(0, width - 24)}px`;
+      const card = panel.getBoundingClientRect();
+      if (width < 160 || card.height > height - 24) { hide(); return; }
+      const x = Math.max(left + 12, Math.min(anchor.left + anchor.width / 2 - card.width / 2, left + width - card.width - 12));
+      const below = anchor.bottom + 9;
+      const y = below + card.height <= top + height - 12 ? below : Math.max(top + 12, anchor.top - card.height - 9);
+      panel.style.left = `${x}px`;
+      panel.style.top = `${y}px`;
+    };
+    const show = async (link: HTMLAnchorElement) => {
+      clearTimeout(closeTimer);
+      if (active === link) return;
+      hide();
+      active = link;
+      const request = generation;
+      screenshot.src = link.dataset.companySnapshot!;
+      domain.textContent = new URL(link.href).hostname.replace(/^www\./, '');
+      try { await screenshot.decode(); } catch { if (generation === request) hide(); return; }
+      if (generation !== request || active !== link) return;
+      panel.hidden = false;
+      position(link);
+      if (!reducedMotion.matches) {
+        reveal = panel.animate([{ opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 150, easing: 'ease-out' });
+      }
+    };
+    const scheduleClose = () => {
+      clearTimeout(closeTimer);
+      closeTimer = window.setTimeout(() => {
+        if (overPanel || (active && (active === hovered || active === focused))) return;
+        hide();
+      }, 160);
+    };
+    document.querySelectorAll<HTMLAnchorElement>('[data-company-snapshot]').forEach(link => {
+      link.addEventListener('pointerenter', event => {
+        if (event.pointerType === 'touch' || !finePointer.matches) return;
+        hovered = link;
+        void show(link);
+      });
+      link.addEventListener('pointerleave', () => { if (hovered === link) hovered = null; scheduleClose(); });
+      link.addEventListener('focus', () => {
+        if (!link.matches(':focus-visible')) return;
+        focused = link;
+        void show(link);
+      });
+      link.addEventListener('blur', () => { if (focused === link) focused = null; scheduleClose(); });
+      link.addEventListener('click', hide);
+    });
+    panel.addEventListener('pointerenter', () => { overPanel = true; clearTimeout(closeTimer); });
+    panel.addEventListener('pointerleave', () => { overPanel = false; scheduleClose(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') hide(); });
+    // Dismiss on viewport changes rather than leave a card detached from its link.
+    window.addEventListener('scroll', hide, { passive: true, capture: true });
+    window.addEventListener('resize', hide, { passive: true });
+    window.visualViewport?.addEventListener('resize', hide, { passive: true });
+    window.visualViewport?.addEventListener('scroll', hide, { passive: true });
+    window.addEventListener('blur', hide);
+    finePointer.addEventListener('change', hide);
+    reducedMotion.addEventListener('change', hide);
+  }
+</script>

@@ -3,6 +3,7 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import ProjectList from '../ProjectList.astro';
 import SocialLinks from '../SocialLinks.astro';
 import CompanyText from '../CompanyText.astro';
+import CompanyPreview from '../CompanyPreview.astro';
 import Icon from '../Icon.astro';
 import { getCollection } from 'astro:content';
 import { getCopy, localizedPath, type Locale } from '../../lib/i18n';
@@ -18,7 +19,7 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft && d
     <div class="hero-content" data-stagger="85">
       <h1 id="name">{locale === 'ar' ? AUTHOR.nameArabic : AUTHOR.name}<span class="name-period" aria-hidden="true">.</span></h1>
       {locale === 'ar' && <p class="latin-name"><bdi dir="ltr">{AUTHOR.name}</bdi></p>}
-      <p class="intro"><CompanyText text={copy.home.intro} locale={locale} /></p>
+      <p class="intro"><CompanyText text={copy.home.intro} locale={locale} preview /></p>
       <div class="hero-bottom">
         <SocialLinks locale={locale} />
         <span class="location"><Icon name="map-pin" size={15} />{copy.home.location.replace(/\.$/, '')}</span>
@@ -32,13 +33,14 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft && d
     </div>
     <ProjectList projects={projects} locale={locale} />
   </section>
+  <CompanyPreview />
 </PageLayout>
 <style>
   .hero { position: relative; padding: 3rem 0 4.5rem; overflow: clip; }
   .hero-content { position: relative; }
   h1 { font-size: clamp(2.1rem, 5vw, 3.65rem); font-weight: 600; line-height: 1.12; letter-spacing: -.045em; }
   .name-period { color: var(--text-secondary); }
-  .intro { max-width: 33rem; margin-top: 1.6rem; font-size: 1.05rem; line-height: 1.85; color: var(--text-secondary); text-wrap: pretty; }
+  .intro { max-width: 33rem; margin-top: 1.6rem; font-size: 1.05rem; line-height: 1.85; color: var(--text-secondary); text-wrap: balance; }
   .latin-name { margin-top: .75rem; font-size: .85rem; color: var(--text-secondary); }
   .hero-bottom { display: flex; align-items: center; gap: 1.3rem; margin-top: 1.4rem; }
   .location { display: flex; align-items: center; gap: .45rem; padding-inline-start: 1.3rem; border-inline-start: 1px solid var(--border); color: var(--text-secondary); font-family: var(--font-mono); font-size: .7rem; }

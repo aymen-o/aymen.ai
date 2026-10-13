@@ -1,7 +1,7 @@
 ---
 import { type Locale } from '../lib/i18n';
-interface Props { text: string; locale?: Locale; }
-const { text, locale = 'en' } = Astro.props;
+interface Props { text: string; locale?: Locale; preview?: boolean; }
+const { text, locale = 'en', preview = false } = Astro.props;
 const companies: Record<string, string> = {
   'Inworld AI': 'https://inworld.ai/',
   Inworld: 'https://inworld.ai/',
@@ -12,9 +12,34 @@ const companies: Record<string, string> = {
   'Bloc Solutions': `https://www.bloc.solutions/${locale === 'fr' ? 'fr' : 'en'}`,
 };
 const parts = text.split(/(Inworld AI|Inworld|Looka|Eddyfi Technologies|Eddyfi|ESAB|Bloc Solutions)/g);
+const brands: Record<string, string> = {
+  'Inworld AI': 'inworld', Inworld: 'inworld', Looka: 'looka',
+  'Eddyfi Technologies': 'eddyfi', Eddyfi: 'eddyfi', ESAB: 'esab', 'Bloc Solutions': 'bloc',
+};
 ---
-{parts.map(part => companies[part] ? <a class="company-link" href={companies[part]} target="_blank" rel="noopener noreferrer"><bdi>{part}</bdi></a> : part)}
+{parts.map(part => companies[part] ? <a
+  class:list={['company-link', preview && 'company-badge']}
+  href={companies[part]} target="_blank" rel="noopener noreferrer"
+  data-brand={preview ? brands[part] : undefined}
+  data-company-snapshot={preview ? `/images/companies/${brands[part]}${brands[part] === 'bloc' && locale === 'fr' ? '-fr' : ''}-preview.webp` : undefined}
+><bdi dir="ltr">{preview && <img src={`/images/companies/${brands[part]}-icon.png`} alt="" width="18" height="18" decoding="async" />}{part}</bdi></a> : preview ? part.replace(/^([.,،؛:])/, '\u2060$1') : part)}
 <style>
   .company-link { color: var(--text); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: .2em; text-decoration-thickness: 1px; }
   .company-link:hover { text-decoration-color: currentColor; }
+  .company-badge { --brand-tint: #afb3bc; display: inline-flex; align-items: center; vertical-align: baseline; padding: .06em .36em; border-radius: 4px; line-height: 1.45; color: var(--text); text-decoration: none; background: color-mix(in srgb, var(--brand-tint) 15%, var(--bg)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand-tint) 12%, transparent); white-space: nowrap; }
+  .company-badge[data-brand="inworld"] { --brand-tint: #c1ada1; }
+  .company-badge[data-brand="looka"] { --brand-tint: #9c7de5; }
+  .company-badge[data-brand="bloc"] { --brand-tint: #42aa97; }
+  .company-badge[data-brand="eddyfi"] { --brand-tint: #cd963a; }
+  .company-badge[data-brand="esab"] { --brand-tint: #d7b936; }
+  .company-badge bdi { display: inline-flex; align-items: center; gap: .3em; }
+  .company-badge img { display: inline-block; flex: none; width: 1em; height: 1em; object-fit: contain; border-radius: 2px; }
+  .company-badge:hover, .company-badge:focus-visible { background: color-mix(in srgb, var(--brand-tint) 24%, var(--bg)); }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .company-badge { transition: background-color 150ms ease, transform 150ms ease; }
+    .company-badge img { transition: transform 150ms ease; }
+    .company-badge:hover { transform: translateY(-1px); }
+    .company-badge:hover img { transform: rotate(-7deg) scale(1.08); }
+  }
+  @media (forced-colors: active) { .company-badge { outline: 1px solid LinkText; color: LinkText; } }
 </style>

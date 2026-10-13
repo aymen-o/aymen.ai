@@ -17,15 +17,20 @@ const brands: Record<string, string> = {
   'Eddyfi Technologies': 'eddyfi', Eddyfi: 'eddyfi', ESAB: 'esab', 'Bloc Solutions': 'bloc',
 };
 ---
-{parts.map(part => companies[part] ? <a
-  class:list={['company-link', preview && 'company-badge']}
-  href={companies[part]} target="_blank" rel="noopener noreferrer"
-  data-brand={preview ? brands[part] : undefined}
-  data-company-snapshot={preview ? `/images/companies/${brands[part]}${brands[part] === 'bloc' && locale === 'fr' ? '-fr' : ''}-preview.webp` : undefined}
-><bdi dir="ltr">{preview && <img src={`/images/companies/${brands[part]}-icon.png`} alt="" width="18" height="18" decoding="async" />}{part}</bdi></a> : preview ? part.replace(/^([.,،؛:])/, '\u2060$1') : part)}
+{parts.map((part, index) => {
+  if (!companies[part]) return preview && companies[parts[index - 1]] ? part.replace(/^[.,،؛:]/, '') : part;
+  if (!preview) return <a class="company-link" href={companies[part]} target="_blank" rel="noopener noreferrer"><bdi>{part}</bdi></a>;
+  return <span class="company-mention"><a
+    class="company-link company-badge"
+    href={companies[part]} target="_blank" rel="noopener noreferrer"
+    data-brand={brands[part]}
+    data-company-snapshot={`/images/companies/${brands[part]}${brands[part] === 'bloc' && locale === 'fr' ? '-fr' : ''}-preview.webp`}
+  ><bdi dir="ltr"><img src={`/images/companies/${brands[part]}-icon.png`} alt="" width="18" height="18" decoding="async" />{part}</bdi></a>{parts[index + 1]?.match(/^[.,،؛:]/)?.[0]}</span>;
+})}
 <style>
   .company-link { color: var(--text); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: .2em; text-decoration-thickness: 1px; }
   .company-link:hover { text-decoration-color: currentColor; }
+  .company-mention { display: inline-block; white-space: nowrap; }
   .company-badge { --brand-tint: #afb3bc; display: inline-flex; align-items: center; vertical-align: baseline; padding: .06em .36em; border-radius: 4px; line-height: 1.45; color: var(--text); text-decoration: none; background: color-mix(in srgb, var(--brand-tint) 15%, var(--bg)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand-tint) 12%, transparent); white-space: nowrap; }
   .company-badge[data-brand="inworld"] { --brand-tint: #c1ada1; }
   .company-badge[data-brand="looka"] { --brand-tint: #9c7de5; }
